@@ -1,0 +1,21 @@
+{
+  "name": "inputmask-core",
+  "version": "1.0.0",
+  "description": "Input mask sans the GUI",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "keywords": [
+    "input",
+    "mask"
+  ],
+  "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "tape": "^3.5.0"
+  },
+  "dependencies": {
+    "object-assign": "^2.0.0"
+  }
+}
