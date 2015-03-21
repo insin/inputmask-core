@@ -132,3 +132,30 @@ test('Backspace with selected range', function(t) {
   t.equal(mask.getValue(), '1234 ____ 1234 1234', 'Other selected characters are blanked out')
   t.deepEqual(mask.selection, {start: 5, end: 5}, 'Cursor placed before first character in selection')
 })
+
+test('Pasting', function(t) {
+  t.plan(9)
+
+  var mask = new InputMask({
+    pattern: '#### #### #### ####'
+  })
+
+  // Invalid characters at any position will cause a paste to be rejected
+  t.notOk(mask.paste('1234123A12341234'), 'Invalid input rejected')
+
+  // A paste larger than the available remaining space will be rejected
+  t.notOk(mask.paste('12341234123412349'), 'Too large input rejected')
+
+  // Pasted input doesn't have to contain static formatting characters...
+  t.ok(mask.paste('1234123412341234'), 'Complete, valid input accepted')
+  t.equal(mask.getValue(), '1234 1234 1234 1234', 'Formatted pasted value')
+  t.deepEqual(mask.selection, {start: 19, end: 19}, 'Cursor position after paste')
+
+  mask.selection = {start: 0, end: 19}
+  t.ok(mask.backspace(), 'Backspace to delete content')
+  t.equal(mask.getValue(), '____ ____ ____ ____', 'Empty after backspace')
+
+  // Pasted input can contain static formatting characters
+  t.ok(mask.paste('1234 1234 1234 1234'), 'Pasted value can contain static parts')
+  t.equal(mask.getValue(), '1234 1234 1234 1234', 'Value after paste')
+})
