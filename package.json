@@ -4,6 +4,7 @@
   "description": "Input mask sans the GUI",
   "main": "lib/index.js",
   "scripts": {
+    "bundle": "browserify lib/index.js -s InputMask -o dist/inputmask-core.js",
     "test": "tape test/*.js"
   },
   "keywords": [
@@ -13,6 +14,7 @@
   "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "browserify": "^9.0.3",
     "tape": "^3.5.0"
   },
   "dependencies": {
