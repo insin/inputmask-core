@@ -22,7 +22,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Basic input', function(t) {
-  t.plan(22)
+  t.plan(23)
 
   var mask = new InputMask({
     pattern: '#### #### #### ####'
@@ -48,6 +48,7 @@ test('Basic input', function(t) {
   t.ok(mask.input('2'), 'Valid input accepted')
   t.ok(mask.input('3'), 'Valid input accepted')
   t.ok(mask.input('4'), 'Valid input accepted')
+  t.notOk(mask.input('1'), 'Input ignored when cursor is at the end of the pattern')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Final value')
 })
 
