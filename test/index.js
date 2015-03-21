@@ -81,3 +81,54 @@ test('Skipping multiple static characters', function(t) {
   t.ok(mask.input('2'), 'Valid input accepted')
   t.equal(mask.getValue(), '1La-li-lu-le-lo2', 'Final value')
 })
+
+test('Basic backspacing', function(t) {
+  t.plan(24)
+
+  var mask = new InputMask({
+    pattern: '#### #### #### ####',
+    value: '1234123412341234'
+  })
+  t.notOk(mask.backspace(), 'Backspace with cursor at start of input is ignored')
+  mask.selection = {start: 19, end: 19}
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  // Backspacking doesn't automatically skip characters, as we can't tell when
+  // the user intends to start making input again, so it just steps over static
+  // parts of the mask when you backspace with the cursor ahead of them.
+  t.ok(mask.backspace(), 'Skipped over blank')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.equal(mask.getValue(), '1234 1234 ____ ____', 'Intermediate value')
+  t.deepEqual(mask.selection, {start: 10, end: 10}, 'Cursor remains in front of last deleted character')
+  t.ok(mask.backspace(), 'Skipped over blank')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Skipped over blank')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.equal(mask.getValue(), '____ ____ ____ ____', 'Final value')
+  t.deepEqual(mask.selection, {start: 0, end: 0}, 'Cursor ended up at the start of input')
+})
+
+test('Backspace with selected range', function(t) {
+  t.plan(4)
+
+  var mask = new InputMask({
+    pattern: '#### #### #### ####',
+    value: '1234123412341234'
+  })
+  t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
+  mask.selection = {start: 5, end: 9}
+  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.equal(mask.getValue(), '1234 ____ 1234 1234', 'Other selected characters are blanked out')
+  t.deepEqual(mask.selection, {start: 5, end: 5}, 'Cursor placed before first character in selection')
+})
