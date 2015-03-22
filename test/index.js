@@ -55,7 +55,7 @@ test('Basic input', function(t) {
 })
 
 test('Input with selected range', function(t) {
-  t.plan(11)
+  t.plan(8)
 
   var mask = new InputMask({
     pattern: '#### #### #### ####',
@@ -65,21 +65,18 @@ test('Input with selected range', function(t) {
 
   // If you have text selected, input will set the first selected character and
   // clear the rest.
-  mask.selection = {start: 5, end: 9}
+  mask.selection = {start: 6, end: 8}
   t.ok(mask.input('9'), 'Valid input accepted')
-  t.equal(mask.getValue(), '1234 9___ 1234 1234', 'Other selected characters are blanked out')
-  t.deepEqual(mask.selection, {start: 6, end: 6}, 'Curspr placed after first character in selection')
+  t.equal(mask.getValue(), '1234 19_4 1234 1234', 'Other selected characters are blanked out')
+  t.deepEqual(mask.selection, {start: 7, end: 7}, 'Curspr placed after first character in selection')
   t.ok(mask.input('8'), 'Valid input accepted')
-  t.ok(mask.input('7'), 'Valid input accepted')
-  t.ok(mask.input('6'), 'Valid input accepted')
-  t.deepEqual(mask.selection, {start: 10, end: 10}, 'Skipped over blank')
-  t.equal(mask.getValue(), '1234 9876 1234 1234', 'Final value')
+  t.equal(mask.getValue(), '1234 1984 1234 1234', 'Final value')
 
   // Static parts of the pattern will be respected even if they're part of a
   // selection being cleared when input is given.
-  mask.selection = {start: 5, end: 14}
-  t.ok(mask.input('1'), 'Valid input accepted')
-  t.equal(mask.getValue(), '1234 1___ ____ 1234', 'Only blanksout input positions')
+  mask.selection = {start: 6, end: 12}
+  t.ok(mask.input('2'), 'Valid input accepted')
+  t.equal(mask.getValue(), '1234 12__ __34 1234', 'Only blanks out input positions')
 })
 
 test('Skipping multiple static characters', function(t) {
@@ -141,10 +138,10 @@ test('Backspace with selected range', function(t) {
     value: '1234123412341234'
   })
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
-  mask.selection = {start: 5, end: 9}
+  mask.selection = {start: 6, end: 8}
   t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.equal(mask.getValue(), '1234 ____ 1234 1234', 'Other selected characters are blanked out')
-  t.deepEqual(mask.selection, {start: 5, end: 5}, 'Cursor placed before first character in selection')
+  t.equal(mask.getValue(), '1234 1__4 1234 1234', 'Other selected characters are blanked out')
+  t.deepEqual(mask.selection, {start: 6, end: 6}, 'Cursor placed before first character in selection')
 })
 
 test('Pasting', function(t) {
