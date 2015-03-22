@@ -29,6 +29,8 @@ test('Basic input', function(t) {
   })
   t.equal(mask.getValue(), '____ ____ ____ ____', 'Initial mask value is blank')
   t.notOk(mask.input('a'), 'Invalid input ignored')
+
+  // Input is provided to the mask one character at a time
   t.ok(mask.input('1'), 'Valid input accepted')
   t.ok(mask.input('2'), 'Valid input accepted')
   t.ok(mask.input('3'), 'Valid input accepted')
@@ -83,6 +85,9 @@ test('Input with selected range', function(t) {
 test('Skipping multiple static characters', function(t) {
   t.plan(3)
 
+  // When taking input, the cursor will jump to the next available character
+  // which takes input, regardless of how many subsequent static pattern parts
+  // there are.
   var mask = new InputMask({
     pattern: '#La-li-lu-le-lo#'
   })
