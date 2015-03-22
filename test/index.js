@@ -53,13 +53,16 @@ test('Basic input', function(t) {
 })
 
 test('Input with selected range', function(t) {
-  t.plan(9)
+  t.plan(11)
 
   var mask = new InputMask({
     pattern: '#### #### #### ####',
     value: '1234123412341234'
   })
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
+
+  // If you have text selected, input will set the first selected character and
+  // clear the rest.
   mask.selection = {start: 5, end: 9}
   t.ok(mask.input('9'), 'Valid input accepted')
   t.equal(mask.getValue(), '1234 9___ 1234 1234', 'Other selected characters are blanked out')
@@ -69,6 +72,12 @@ test('Input with selected range', function(t) {
   t.ok(mask.input('6'), 'Valid input accepted')
   t.deepEqual(mask.selection, {start: 10, end: 10}, 'Skipped over blank')
   t.equal(mask.getValue(), '1234 9876 1234 1234', 'Final value')
+
+  // Static parts of the pattern will be respected even if they're part of a
+  // selection being cleared when input is given.
+  mask.selection = {start: 5, end: 14}
+  t.ok(mask.input('1'), 'Valid input accepted')
+  t.equal(mask.getValue(), '1234 1___ ____ 1234', 'Only blanksout input positions')
 })
 
 test('Skipping multiple static characters', function(t) {
