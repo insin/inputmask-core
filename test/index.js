@@ -21,6 +21,25 @@ test('formatValueToPattern', function(t) {
   t.equal(formatValueToPattern('', '##/##/####'), '__/__/____', 'Empty value gets all placeholders')
 })
 
+test('Constructor options', function(t) {
+  t.plan(6)
+
+  t.throws(function() { new InputMask },
+           /InputMask: you must provide a pattern./,
+           'Pattern is required')
+  t.throws(function() { new InputMask({pattern: '123456'}) },
+           /InputMask: pattern "123456" does not contain any editable characters./,
+           'Patterns must contain editable characters')
+
+  var mask = new InputMask({pattern: '#### #### #### ####'})
+  t.equal(mask._firstEditableIndex, 0, 'Full range first editable index ')
+  t.equal(mask._lastEditableIndex, 18, 'Full range last editable index calculation')
+
+  mask = new InputMask({pattern: '123###123'})
+  t.equal(mask._firstEditableIndex, 3, 'Partial range first editable index calculation')
+  t.equal(mask._lastEditableIndex, 5, 'Partial range last editable index calculation')
+})
+
 test('Basic input', function(t) {
   t.plan(23)
 
