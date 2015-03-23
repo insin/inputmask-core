@@ -50,25 +50,25 @@ test('Basic input', function(t) {
   t.notOk(mask.input('a'), 'Invalid input ignored')
 
   // Input is provided to the mask one character at a time
-  t.ok(mask.input('1'), 'Valid input accepted')
-  t.ok(mask.input('2'), 'Valid input accepted')
-  t.ok(mask.input('3'), 'Valid input accepted')
-  t.ok(mask.input('4'), 'Valid input accepted')
+  t.true(mask.input('1'), 'Valid input accepted')
+  t.true(mask.input('2'), 'Valid input accepted')
+  t.true(mask.input('3'), 'Valid input accepted')
+  t.true(mask.input('4'), 'Valid input accepted')
   t.deepEqual(mask.selection, {start: 5, end: 5}, 'Skipped over blank')
-  t.ok(mask.input('1'), 'Valid input accepted')
-  t.ok(mask.input('2'), 'Valid input accepted')
-  t.ok(mask.input('3'), 'Valid input accepted')
-  t.ok(mask.input('4'), 'Valid input accepted')
+  t.true(mask.input('1'), 'Valid input accepted')
+  t.true(mask.input('2'), 'Valid input accepted')
+  t.true(mask.input('3'), 'Valid input accepted')
+  t.true(mask.input('4'), 'Valid input accepted')
   t.deepEqual(mask.selection, {start: 10, end: 10}, 'Skipped over blank')
-  t.ok(mask.input('1'), 'Valid input accepted')
-  t.ok(mask.input('2'), 'Valid input accepted')
-  t.ok(mask.input('3'), 'Valid input accepted')
-  t.ok(mask.input('4'), 'Valid input accepted')
+  t.true(mask.input('1'), 'Valid input accepted')
+  t.true(mask.input('2'), 'Valid input accepted')
+  t.true(mask.input('3'), 'Valid input accepted')
+  t.true(mask.input('4'), 'Valid input accepted')
   t.deepEqual(mask.selection, {start: 15, end: 15}, 'Skipped over blank')
-  t.ok(mask.input('1'), 'Valid input accepted')
-  t.ok(mask.input('2'), 'Valid input accepted')
-  t.ok(mask.input('3'), 'Valid input accepted')
-  t.ok(mask.input('4'), 'Valid input accepted')
+  t.true(mask.input('1'), 'Valid input accepted')
+  t.true(mask.input('2'), 'Valid input accepted')
+  t.true(mask.input('3'), 'Valid input accepted')
+  t.true(mask.input('4'), 'Valid input accepted')
   t.notOk(mask.input('1'), 'Input ignored when cursor is at the end of the pattern')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Final value')
 })
@@ -85,16 +85,16 @@ test('Input with selected range', function(t) {
   // If you have text selected, input will set the first selected character and
   // clear the rest.
   mask.selection = {start: 6, end: 8}
-  t.ok(mask.input('9'), 'Valid input accepted')
+  t.true(mask.input('9'), 'Valid input accepted')
   t.equal(mask.getValue(), '1234 19_4 1234 1234', 'Other selected characters are blanked out')
   t.deepEqual(mask.selection, {start: 7, end: 7}, 'Curspr placed after first character in selection')
-  t.ok(mask.input('8'), 'Valid input accepted')
+  t.true(mask.input('8'), 'Valid input accepted')
   t.equal(mask.getValue(), '1234 1984 1234 1234', 'Final value')
 
   // Static parts of the pattern will be respected even if they're part of a
   // selection being cleared when input is given.
   mask.selection = {start: 6, end: 12}
-  t.ok(mask.input('2'), 'Valid input accepted')
+  t.true(mask.input('2'), 'Valid input accepted')
   t.equal(mask.getValue(), '1234 12__ __34 1234', 'Only blanks out input positions')
 })
 
@@ -107,8 +107,8 @@ test('Skipping multiple static characters', function(t) {
   var mask = new InputMask({
     pattern: '#La-li-lu-le-lo#'
   })
-  t.ok(mask.input('1'), 'Valid input accepted')
-  t.ok(mask.input('2'), 'Valid input accepted')
+  t.true(mask.input('1'), 'Valid input accepted')
+  t.true(mask.input('2'), 'Valid input accepted')
   t.equal(mask.getValue(), '1La-li-lu-le-lo2', 'Final value')
 })
 
@@ -121,30 +121,30 @@ test('Basic backspacing', function(t) {
   })
   t.notOk(mask.backspace(), 'Backspace with cursor at start of input is ignored')
   mask.selection = {start: 19, end: 19}
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
   // Backspacking doesn't automatically skip characters, as we can't tell when
   // the user intends to start making input again, so it just steps over static
   // parts of the mask when you backspace with the cursor ahead of them.
-  t.ok(mask.backspace(), 'Skipped over blank')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Skipped over blank')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
   t.equal(mask.getValue(), '1234 1234 ____ ____', 'Intermediate value')
   t.deepEqual(mask.selection, {start: 10, end: 10}, 'Cursor remains in front of last deleted character')
-  t.ok(mask.backspace(), 'Skipped over blank')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Skipped over blank')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
-  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Skipped over blank')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Skipped over blank')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
   t.equal(mask.getValue(), '____ ____ ____ ____', 'Final value')
   t.deepEqual(mask.selection, {start: 0, end: 0}, 'Cursor ended up at the start of input')
 })
@@ -158,7 +158,7 @@ test('Backspace with selected range', function(t) {
   })
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
   mask.selection = {start: 6, end: 8}
-  t.ok(mask.backspace(), 'Valid backspace accepted')
+  t.true(mask.backspace(), 'Valid backspace accepted')
   t.equal(mask.getValue(), '1234 1__4 1234 1234', 'Other selected characters are blanked out')
   t.deepEqual(mask.selection, {start: 6, end: 6}, 'Cursor placed before first character in selection')
 })
@@ -177,16 +177,16 @@ test('Pasting', function(t) {
   t.notOk(mask.paste('12341234123412349'), 'Too large input rejected')
 
   // Pasted input doesn't have to contain static formatting characters...
-  t.ok(mask.paste('1234123412341234'), 'Complete, valid input accepted')
+  t.true(mask.paste('1234123412341234'), 'Complete, valid input accepted')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Formatted pasted value')
   t.deepEqual(mask.selection, {start: 19, end: 19}, 'Cursor position after paste')
 
   mask.selection = {start: 0, end: 19}
-  t.ok(mask.backspace(), 'Backspace to delete content')
+  t.true(mask.backspace(), 'Backspace to delete content')
   t.equal(mask.getValue(), '____ ____ ____ ____', 'Empty after backspace')
 
   // Pasted input can contain static formatting characters
-  t.ok(mask.paste('1234 1234 1234 1234'), 'Pasted value can contain static parts')
+  t.true(mask.paste('1234 1234 1234 1234'), 'Pasted value can contain static parts')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Value after paste')
 })
 
