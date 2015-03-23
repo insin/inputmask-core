@@ -13,8 +13,8 @@ optional static chracters which may not be edited.
 ```
 InputMask(options: {
   pattern: string,
-  selection: ?{start: number, end: number},
-  value: ?string
+  value: ?string,
+  selection: ?{start: number, end: number}
 })
 ```
 
@@ -37,6 +37,9 @@ A masking pattern. The following characters signify editable parts of the mask:
 
 All other characters are treated as static.
 
+A pattern must be provided and must contain at least one editable character, or
+an `Error` will be thrown.
+
 #### Example patterns
 
 * Credit card number: `#### #### #### ####`
@@ -44,18 +47,16 @@ All other characters are treated as static.
 * ISO date: `####-##-##`
 * Time: `##:##`
 
+### `value`
+
+An optional initial value for the mask - see [`setValue()`](#setvaluevalue-string)
+for more details.
+
 ### `selection`
 
 Default selection - see below.
 
-### `value`
-
-An optional initial value for the mask - this will be applied to the pattern,
-with invalid - or missing - editable characters replaced with placeholders.
-
-This value may optionally contain static parts of the mask's pattern.
-
-## Public properties & getters
+## Public properties, getters & setters
 
 ### `selection: {start: number; end: number}`
 
@@ -68,10 +69,34 @@ string.
 You are responsible for ensuring the selection is accurate before calling any
 editing operations.
 
+### `setSelection(selection: {start: number; end: number}): boolean`
+
+Sets the selection and performs an editable cursor range check if the selection
+change sets the cursor position (i.e. `start` and `end` are the same).
+
+If the mask's pattern begins or ends with static characters, this method will
+prevent the cursor being set prior to the first editable character or beyond the
+last editable character. Returns
+
 ### `getValue(): string`
 
 Gets the current value of the string, which will always conform to the mask's
 pattern.
+
+### `setValue(value: string)`
+
+Sets the value in the mask. The given value will be applied to the mask's
+pattern, with invalid - or missing - editable characters replaced with
+placeholders.
+
+The value may optionally contain static parts of the mask's pattern.
+
+### `setPattern(pattern: string, value: ?string)`
+
+Changes the mask's pattern.
+
+A new value can also be provided - if not provided, the value will default to
+blank, clearing the mask.
 
 ## Editing operations
 
