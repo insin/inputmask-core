@@ -189,3 +189,19 @@ test('Pasting', function(t) {
   t.ok(mask.paste('1234 1234 1234 1234'), 'Pasted value can contain static parts')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Value after paste')
 })
+
+test('Setting selection', function(t) {
+  var mask = new InputMask({pattern: '(028) 38## #### 123'})
+  t.equal(mask._firstEditableIndex, 8, 'First editable index calculation')
+  t.equal(mask._lastEditableIndex, 14, 'Last editable index calculation')
+  // The cursor cannot be placed before the first editable index...
+  t.true(mask.setSelection({start: 0, end: 0}), 'Cursor before editable region is changed')
+  t.deepEqual(mask.selection, {start: 8, end: 8}, 'Cursor placed at first editable character')
+  // ...or beyond the last editable character
+  t.true(mask.setSelection({start: 18, end: 18}), 'Cursor after editable region is changed')
+  t.deepEqual(mask.selection, {start: 15, end: 15}, 'Cursor placed after last editable character')
+  // ...however a selection can span beyond the editable region
+  t.false(mask.setSelection({start: 0, end: 19}), 'Selection beyond editable region not changed')
+  t.deepEqual(mask.selection, {start: 0, end: 19}, 'Whole value can be selected')
+  t.end()
+})
