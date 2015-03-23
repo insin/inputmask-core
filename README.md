@@ -54,11 +54,12 @@ for more details.
 
 ### `selection`
 
-Default selection - see below.
+Default selection - see [`setSelection()`](#setselectionselection-start-number-end-number-boolean)
+for more details.
 
 ## Public properties, getters & setters
 
-### `selection: {start: number; end: number}`
+### `.selection: {start: number; end: number}`
 
 An object with numeric `start` and `end` properties, where `end >= start`.
 
@@ -76,11 +77,13 @@ change sets the cursor position (i.e. `start` and `end` are the same).
 
 If the mask's pattern begins or ends with static characters, this method will
 prevent the cursor being set prior to the first editable character or beyond the
-last editable character. Returns
+last editable character.
+
+Returns `true` if the cursor was moved by this method, `false` otherwise.
 
 ### `getValue(): string`
 
-Gets the current value of the string, which will always conform to the mask's
+Gets the current value in the mask, which will always conform to the mask's
 pattern.
 
 ### `setValue(value: string)`
