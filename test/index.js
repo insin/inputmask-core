@@ -172,7 +172,7 @@ test('Backspace with selected range', function(t) {
 })
 
 test('Pasting', function(t) {
-  t.plan(9)
+  t.plan(10)
 
   var mask = new InputMask({
     pattern: '#### #### #### ####'
@@ -181,10 +181,14 @@ test('Pasting', function(t) {
   // Invalid characters at any position will cause a paste to be rejected
   t.notOk(mask.paste('1234123A12341234'), 'Invalid input rejected')
 
-  // A paste larger than the available remaining space will be rejected
-  t.notOk(mask.paste('12341234123412349'), 'Too large input rejected')
+  // A paste larger than the available remaining space will not be rejected if
+  // input was valid up to the end of the editable portion of the mask.
+  t.true(mask.paste('12341234123412349'), 'Too large input not rejected')
+  t.equal(mask.getValue(), '1234 1234 1234 1234')
 
   // Pasted input doesn't have to contain static formatting characters...
+  mask.setValue('')
+  mask.selection = {start: 0, end: 0}
   t.true(mask.paste('1234123412341234'), 'Complete, valid input accepted')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Formatted pasted value')
   t.deepEqual(mask.selection, {start: 19, end: 19}, 'Cursor position after paste')
