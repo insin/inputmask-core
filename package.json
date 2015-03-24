@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "bundle": "browserify lib/index.js -s InputMask -o dist/inputmask-core.js",
+    "compress": "uglifyjs dist/inputmask-core.js -o dist/inputmask-core.min.js",
     "test": "tape test/*.js"
   },
   "keywords": [
@@ -15,7 +16,8 @@
   "license": "MIT",
   "devDependencies": {
     "browserify": "^9.0.3",
-    "tape": "^3.5.0"
+    "tape": "^3.5.0",
+    "uglifyjs": "^2.4.10"
   },
   "dependencies": {
     "object-assign": "^2.0.0"
