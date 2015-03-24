@@ -74,7 +74,7 @@ test('Basic input', function(t) {
 })
 
 test('Input with selected range', function(t) {
-  t.plan(8)
+  t.plan(11)
 
   var mask = new InputMask({
     pattern: '#### #### #### ####',
@@ -96,6 +96,14 @@ test('Input with selected range', function(t) {
   mask.selection = {start: 6, end: 12}
   t.true(mask.input('2'), 'Valid input accepted')
   t.equal(mask.getValue(), '1234 12__ __34 1234', 'Only blanks out input positions')
+
+  // If a range of charactes are selected and the first character was contained
+  // in the range, any input given should apply to it.
+  mask = new InputMask({pattern: '(028) #### ####'})
+  mask.selection = {start: 0, end: 15}
+  t.true(mask.input('2'), 'Valid input accepted')
+  t.equal(mask.getValue(), '(028) 2___ ____', 'Value was applied to the first editable character')
+  t.deepEqual(mask.selection, {start: 7, end: 7}, 'Cursor was placed after first editable character')
 })
 
 test('Skipping multiple static characters', function(t) {
