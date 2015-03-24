@@ -221,6 +221,8 @@ test('Pasting with leading static pattern in selection', function(t) {
 })
 
 test('Setting selection', function(t) {
+  t.plan(8)
+
   var mask = new InputMask({pattern: '(028) 38## #### 123'})
   t.equal(mask._firstEditableIndex, 8, 'First editable index calculation')
   t.equal(mask._lastEditableIndex, 14, 'Last editable index calculation')
@@ -233,5 +235,4 @@ test('Setting selection', function(t) {
   // ...however a selection can span beyond the editable region
   t.false(mask.setSelection({start: 0, end: 19}), 'Selection beyond editable region not changed')
   t.deepEqual(mask.selection, {start: 0, end: 19}, 'Whole value can be selected')
-  t.end()
 })
