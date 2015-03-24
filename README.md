@@ -54,7 +54,7 @@ for more details.
 
 ### `selection`
 
-Default selection - see [`setSelection()`](#setselectionselection-start-number-end-number-boolean)
+Default selection - see [`selection`](#selection-start-number-end-number) below
 for more details.
 
 ## Public properties, getters & setters
