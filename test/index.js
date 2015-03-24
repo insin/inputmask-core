@@ -198,6 +198,28 @@ test('Pasting', function(t) {
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Value after paste')
 })
 
+test('Pasting with leading static pattern in selection', function(t) {
+  t.plan(7)
+
+  var mask = new InputMask({
+    pattern: '(028) #### ####'
+  })
+
+  // Pasting with cursor in leading static part
+  mask.selection = {start: 0, end: 0}
+  t.false(mask.paste('1234 5678'), 'Paste fails if leading static pattern not matched')
+  t.ok(mask.paste('(028) 1234 5678'), 'Paste succeeds when leading static pattern is matched')
+  t.equal(mask.getValue(), '(028) 1234 5678')
+
+  // Pasting with selection including leading static part
+  mask.setValue('')
+  t.equal(mask.getValue(), '(028) ____ ____')
+  mask.selection = {start: 0, end: 15}
+  t.false(mask.paste('1'), 'Paste fails if leading static pattern not matched')
+  t.ok(mask.paste('(028) 1'), 'Paste succeeds when leading static pattern is matched')
+  t.equal(mask.getValue(), '(028) 1___ ____')
+})
+
 test('Setting selection', function(t) {
   var mask = new InputMask({pattern: '(028) 38## #### 123'})
   t.equal(mask._firstEditableIndex, 8, 'First editable index calculation')
