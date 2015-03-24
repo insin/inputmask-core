@@ -47,7 +47,7 @@ test('Basic input', function(t) {
     pattern: '#### #### #### ####'
   })
   t.equal(mask.getValue(), '____ ____ ____ ____', 'Initial mask value is blank')
-  t.notOk(mask.input('a'), 'Invalid input ignored')
+  t.false(mask.input('a'), 'Invalid input ignored')
 
   // Input is provided to the mask one character at a time
   t.true(mask.input('1'), 'Valid input accepted')
@@ -69,7 +69,7 @@ test('Basic input', function(t) {
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
-  t.notOk(mask.input('1'), 'Input ignored when cursor is at the end of the pattern')
+  t.false(mask.input('1'), 'Input ignored when cursor is at the end of the pattern')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Final value')
 })
 
@@ -127,7 +127,7 @@ test('Basic backspacing', function(t) {
     pattern: '#### #### #### ####',
     value: '1234123412341234'
   })
-  t.notOk(mask.backspace(), 'Backspace with cursor at start of input is ignored')
+  t.false(mask.backspace(), 'Backspace with cursor at start of input is ignored')
   mask.selection = {start: 19, end: 19}
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
@@ -179,7 +179,7 @@ test('Pasting', function(t) {
   })
 
   // Invalid characters at any position will cause a paste to be rejected
-  t.notOk(mask.paste('1234123A12341234'), 'Invalid input rejected')
+  t.false(mask.paste('1234123A12341234'), 'Invalid input rejected')
 
   // A paste larger than the available remaining space will not be rejected if
   // input was valid up to the end of the editable portion of the mask.
