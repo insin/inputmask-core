@@ -11,14 +11,14 @@ test('formatValueToPattern', function(t) {
     return InputMask.formatValueToPattern(value.split(''), pattern.split('')).join('')
   }
 
-  t.equal(formatValueToPattern('', '## ##'), '__ __', 'Empty value gets all placeholders')
-  t.equal(formatValueToPattern('1', '## ##'), '1_ __', 'Partial value 1')
-  t.equal(formatValueToPattern('12', '## ##'), '12 __', 'Partial value 2')
-  t.equal(formatValueToPattern('123', '## ##'), '12 3_', 'Partial value 3')
-  t.equal(formatValueToPattern('1234', '## ##'), '12 34', 'Complete value (values only)')
-  t.equal(formatValueToPattern('12 34', '## ##'), '12 34', 'Complete value (with format characters)')
+  t.equal(formatValueToPattern('', '11 11'), '__ __', 'Empty value gets all placeholders')
+  t.equal(formatValueToPattern('1', '11 11'), '1_ __', 'Partial value 1')
+  t.equal(formatValueToPattern('12', '11 11'), '12 __', 'Partial value 2')
+  t.equal(formatValueToPattern('123', '11 11'), '12 3_', 'Partial value 3')
+  t.equal(formatValueToPattern('1234', '11 11'), '12 34', 'Complete value (values only)')
+  t.equal(formatValueToPattern('12 34', '11 11'), '12 34', 'Complete value (with format characters)')
 
-  t.equal(formatValueToPattern('', '##/##/####'), '__/__/____', 'Empty value gets all placeholders')
+  t.equal(formatValueToPattern('', '11/11/1111'), '__/__/____', 'Empty value gets all placeholders')
 })
 
 test('Constructor options', function(t) {
@@ -27,24 +27,30 @@ test('Constructor options', function(t) {
   t.throws(function() { new InputMask },
            /InputMask: you must provide a pattern./,
            'Pattern is required')
-  t.throws(function() { new InputMask({pattern: '123456'}) },
-           /InputMask: pattern "123456" does not contain any editable characters./,
+  t.throws(function() { new InputMask({pattern: '------'}) },
+           /InputMask: pattern "------" does not contain any editable characters./,
            'Patterns must contain editable characters')
 
-  var mask = new InputMask({pattern: '#### #### #### ####'})
+  var mask = new InputMask({pattern: '1111 1111 1111 1111'})
   t.equal(mask._firstEditableIndex, 0, 'Full range first editable index ')
   t.equal(mask._lastEditableIndex, 18, 'Full range last editable index calculation')
 
-  mask = new InputMask({pattern: '123###123'})
+  mask = new InputMask({pattern: '---111---'})
   t.equal(mask._firstEditableIndex, 3, 'Partial range first editable index calculation')
   t.equal(mask._lastEditableIndex, 5, 'Partial range last editable index calculation')
+})
+
+test('Placeholder characters', function(t) {
+  t.plan(1)
+  var mask = new InputMask({pattern: '1A**', value: '9f9f'})
+  t.equal(mask.getValue(), '9f9f', 'All values, no placeholders')
 })
 
 test('Basic input', function(t) {
   t.plan(23)
 
   var mask = new InputMask({
-    pattern: '#### #### #### ####'
+    pattern: '1111 1111 1111 1111'
   })
   t.equal(mask.getValue(), '____ ____ ____ ____', 'Initial mask value is blank')
   t.false(mask.input('a'), 'Invalid input ignored')
@@ -77,7 +83,7 @@ test('Input with selected range', function(t) {
   t.plan(11)
 
   var mask = new InputMask({
-    pattern: '#### #### #### ####',
+    pattern: '1111 1111 1111 1111',
     value: '1234123412341234'
   })
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
@@ -99,10 +105,10 @@ test('Input with selected range', function(t) {
 
   // If a range of charactes are selected and the first character was contained
   // in the range, any input given should apply to it.
-  mask = new InputMask({pattern: '(028) #### ####'})
+  mask = new InputMask({pattern: '----- 1111 1111'})
   mask.selection = {start: 0, end: 15}
   t.true(mask.input('2'), 'Valid input accepted')
-  t.equal(mask.getValue(), '(028) 2___ ____', 'Value was applied to the first editable character')
+  t.equal(mask.getValue(), '----- 2___ ____', 'Value was applied to the first editable character')
   t.deepEqual(mask.selection, {start: 7, end: 7}, 'Cursor was placed after first editable character')
 })
 
@@ -113,18 +119,18 @@ test('Skipping multiple static characters', function(t) {
   // which takes input, regardless of how many subsequent static pattern parts
   // there are.
   var mask = new InputMask({
-    pattern: '#La-li-lu-le-lo#'
+    pattern: '1----1'
   })
   t.true(mask.input('1'), 'Valid input accepted')
   t.true(mask.input('2'), 'Valid input accepted')
-  t.equal(mask.getValue(), '1La-li-lu-le-lo2', 'Final value')
+  t.equal(mask.getValue(), '1----2', 'Final value')
 })
 
 test('Basic backspacing', function(t) {
   t.plan(24)
 
   var mask = new InputMask({
-    pattern: '#### #### #### ####',
+    pattern: '1111 1111 1111 1111',
     value: '1234123412341234'
   })
   t.false(mask.backspace(), 'Backspace with cursor at start of input is ignored')
@@ -161,7 +167,7 @@ test('Backspace with selected range', function(t) {
   t.plan(4)
 
   var mask = new InputMask({
-    pattern: '#### #### #### ####',
+    pattern: '1111 1111 1111 1111',
     value: '1234123412341234'
   })
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
@@ -175,7 +181,7 @@ test('Pasting', function(t) {
   t.plan(10)
 
   var mask = new InputMask({
-    pattern: '#### #### #### ####'
+    pattern: '1111 1111 1111 1111'
   })
 
   // Invalid characters at any position will cause a paste to be rejected
@@ -206,28 +212,28 @@ test('Pasting with leading static pattern in selection', function(t) {
   t.plan(7)
 
   var mask = new InputMask({
-    pattern: '(028) #### ####'
+    pattern: '----- 1111 1111'
   })
 
   // Pasting with cursor in leading static part
   mask.selection = {start: 0, end: 0}
   t.false(mask.paste('1234 5678'), 'Paste fails if leading static pattern not matched')
-  t.ok(mask.paste('(028) 1234 5678'), 'Paste succeeds when leading static pattern is matched')
-  t.equal(mask.getValue(), '(028) 1234 5678')
+  t.ok(mask.paste('----- 1234 5678'), 'Paste succeeds when leading static pattern is matched')
+  t.equal(mask.getValue(), '----- 1234 5678')
 
   // Pasting with selection including leading static part
   mask.setValue('')
-  t.equal(mask.getValue(), '(028) ____ ____')
+  t.equal(mask.getValue(), '----- ____ ____')
   mask.selection = {start: 0, end: 15}
   t.false(mask.paste('1'), 'Paste fails if leading static pattern not matched')
-  t.ok(mask.paste('(028) 1'), 'Paste succeeds when leading static pattern is matched')
-  t.equal(mask.getValue(), '(028) 1___ ____')
+  t.ok(mask.paste('----- 1'), 'Paste succeeds when leading static pattern is matched')
+  t.equal(mask.getValue(), '----- 1___ ____')
 })
 
 test('Setting selection', function(t) {
   t.plan(8)
 
-  var mask = new InputMask({pattern: '(028) 38## #### 123'})
+  var mask = new InputMask({pattern: '----- [[11 1111 ]]-'})
   t.equal(mask._firstEditableIndex, 8, 'First editable index calculation')
   t.equal(mask._lastEditableIndex, 14, 'Last editable index calculation')
   // The cursor cannot be placed before the first editable index...
