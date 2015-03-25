@@ -8,7 +8,7 @@ test('formatValueToPattern', function(t) {
   t.plan(7)
 
   function formatValueToPattern(value, pattern) {
-    return InputMask.formatValueToPattern(value.split(''), pattern.split('')).join('')
+    return new InputMask.Pattern(pattern).formatValue(value.split('')).join('')
   }
 
   t.equal(formatValueToPattern('', '11 11'), '__ __', 'Empty value gets all placeholders')
@@ -32,18 +32,31 @@ test('Constructor options', function(t) {
            'Patterns must contain editable characters')
 
   var mask = new InputMask({pattern: '1111 1111 1111 1111'})
-  t.equal(mask._firstEditableIndex, 0, 'Full range first editable index ')
-  t.equal(mask._lastEditableIndex, 18, 'Full range last editable index calculation')
+  t.equal(mask.pattern.firstEditableIndex, 0, 'Full range first editable index ')
+  t.equal(mask.pattern.lastEditableIndex, 18, 'Full range last editable index calculation')
 
   mask = new InputMask({pattern: '---111---'})
-  t.equal(mask._firstEditableIndex, 3, 'Partial range first editable index calculation')
-  t.equal(mask._lastEditableIndex, 5, 'Partial range last editable index calculation')
+  t.equal(mask.pattern.firstEditableIndex, 3, 'Partial range first editable index calculation')
+  t.equal(mask.pattern.lastEditableIndex, 5, 'Partial range last editable index calculation')
 })
 
 test('Placeholder characters', function(t) {
   t.plan(1)
   var mask = new InputMask({pattern: '1A**', value: '9f9f'})
   t.equal(mask.getValue(), '9f9f', 'All values, no placeholders')
+})
+
+test('Escaping placeholder characters', function(t) {
+  //t.plan(2)
+  t.throws(function() { new InputMask({pattern: '\\1\\A\\*\\*'}) },
+           /InputMask: pattern "\\1\\A\\\*\\\*" does not contain any editable characters./,
+           'Escaped placeholders treated as static characters')
+  t.throws(function() { new InputMask({pattern: 'A1*\\'}) },
+           /InputMask: pattern ends with a raw \\/,
+           'A pattern must not end with an escape character')
+  var mask = new InputMask({pattern: '\\\\\\1:1,\\A:A,\\*:*\\\\', value: '9Zg'})
+  t.equal(mask.getValue(), '\\1:9,A:Z,*:g\\', 'Escape character can be escaped')
+  t.end()
 })
 
 test('Basic input', function(t) {
@@ -234,8 +247,8 @@ test('Setting selection', function(t) {
   t.plan(8)
 
   var mask = new InputMask({pattern: '----- [[11 1111 ]]-'})
-  t.equal(mask._firstEditableIndex, 8, 'First editable index calculation')
-  t.equal(mask._lastEditableIndex, 14, 'Last editable index calculation')
+  t.equal(mask.pattern.firstEditableIndex, 8, 'First editable index calculation')
+  t.equal(mask.pattern.lastEditableIndex, 14, 'Last editable index calculation')
   // The cursor cannot be placed before the first editable index...
   t.true(mask.setSelection({start: 0, end: 0}), 'Cursor before editable region is changed')
   t.deepEqual(mask.selection, {start: 8, end: 8}, 'Cursor placed at first editable character')

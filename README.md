@@ -199,13 +199,32 @@ Options for the `InputMask` constructor.
 
 #### `pattern`
 
-A masking pattern. The following characters signify editable parts of the mask:
+A masking pattern.
+
+The following characters signify editable parts of the mask:
 
 * `1` - number
 * `A` - letter
 * `*` - alphanumeric
 
-All other characters are treated as static.
+If you need to include one of these characters as a static part of the pattern,
+you can escape then with a preceding backslash:
+
+```javascript
+var mask = new InputMask({pattern: '\\A11 \\1AA', value: 'A99 1ZZ'})
+mask.getValue()
+// → 'A99 1ZZ'
+```
+
+If you need to include a static backslash in a pattern, you must escape it:
+
+```javascript
+var mask = new InputMask({pattern: '\\\\A11\\\\', value: 'Z98'})
+mask.getValue()
+// → '\\Z98\\'
+```
+
+Otherwise, all other characters are treated as static parts of the pattern.
 
 A pattern must be provided and must contain at least one editable character, or
 an `Error` will be thrown.
