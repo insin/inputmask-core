@@ -4,6 +4,8 @@ Added the ability to escape special pattern characters with a leading backslash.
 As a result, backslashes must also be escaped to be used as static parts of a
 mask's pattern.
 
+Added `mask.emptyValue` for convenient comparison.
+
 ## 1.0.0 / 2015-03-25
 
 Initial realease features:

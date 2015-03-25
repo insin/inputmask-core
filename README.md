@@ -78,6 +78,10 @@ var mask = InputMask({pattern: '1111-1111', value: '12345678'})
 
 ## `InputMask` public properties, getters & setters
 
+### `emptyValue` : `string`
+
+The value the mask will have when none of its editable data has been filled in.
+
 ### `selection` : `Selection`
 
 The current selection within the input.
@@ -207,8 +211,8 @@ The following characters signify editable parts of the mask:
 * `A` - letter
 * `*` - alphanumeric
 
-If you need to include one of these characters as a static part of the pattern,
-you can escape then with a preceding backslash:
+If you need to include one of these characters as a static part of the mask, you
+can escape them with a preceding backslash:
 
 ```javascript
 var mask = new InputMask({pattern: '\\A11 \\1AA', value: 'A99 1ZZ'})

@@ -22,7 +22,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(8)
+  t.plan(11)
 
   t.throws(function() { new InputMask },
            /InputMask: you must provide a pattern./,
@@ -42,6 +42,11 @@ test('Constructor options', function(t) {
 
   mask = new InputMask({pattern: '-1-1-1-', value: '987'})
   t.equal(mask.getValue(), '-9-8-7-', 'Initial value is formatted')
+  t.equal(mask.emptyValue, '-_-_-_-', 'emptyValue checks out')
+
+  mask.setPattern('--11--', '99')
+  t.equal(mask.getValue(), '--99--', 'New pattern value is set')
+  t.equal(mask.emptyValue, '--__--', 'emptyValue is updated after setPattern')
 })
 
 test('Placeholder characters', function(t) {
