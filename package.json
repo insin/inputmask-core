@@ -15,6 +15,13 @@
   "devDependencies": {
     "tape": "^3.5.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/insin/inputmask-core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/insin/inputmask-core/issues"
+  },
+  "homepage": "https://github.com/insin/inputmask-core"
 }
