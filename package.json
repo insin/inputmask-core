@@ -1,11 +1,9 @@
 {
   "name": "inputmask-core",
   "version": "1.0.0",
-  "description": "Input mask sans the GUI",
+  "description": "Standalone input mask implementation, independent of any GUI",
   "main": "lib/index.js",
   "scripts": {
-    "bundle": "browserify lib/index.js -s InputMask -o dist/inputmask-core.js",
-    "compress": "uglifyjs dist/inputmask-core.js -o dist/inputmask-core.min.js",
     "test": "tape test/*.js"
   },
   "keywords": [
@@ -15,9 +13,7 @@
   "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "browserify": "^9.0.3",
-    "tape": "^3.5.0",
-    "uglifyjs": "^2.4.10"
+    "tape": "^3.5.0"
   },
   "dependencies": {
   }

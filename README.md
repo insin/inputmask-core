@@ -1,10 +1,16 @@
 # inputmask-core [![Build Status](https://secure.travis-ci.org/insin/inputmask-core.png)](http://travis-ci.org/insin/inputmask-core)
 
-An input mask without a GUI.
+A standalone input mask implementation, which is independent of any GUI.
 
 `InputMask` encapsulates editing operations on a string which must conform to a
-pattern defining editable positions and the types of data they may contain, plus
-optional static characters which may not be edited.
+fixed-width pattern defining editable positions and the types of data they may
+contain, plus optional static characters which may not be edited.
+
+## Install
+
+```
+npm install inputmask-core
+```
 
 ## Usage
 
@@ -13,28 +19,39 @@ Importing and creating an instance:
 ```javascript
 var InputMask = require('inputmask-core')
 
-var mask = new InputMask({pattern: '##/##/####'})
+var mask = new InputMask({pattern: '11/11/1111'})
 ```
 
-Examples of editing the mask:
+Examples of editing a mask:
 
 ```javascript
-mask.input('a') // invalid input
+/*  Invalid input is rejected */
+mask.input('a')
 // → false
-mask.input('1') // valid input
+
+/* Valid input is accepted */
+mask.input('1')
 // → true
 mask.getValue()
 // → '1_/__/____'
+
+/* Editing operations update the cursor position */
 mask.selection
 // → {start: 1, end: 1}
+
+/* Pasting is supported */
 mask.paste('2345678')
 // → true
 mask.getValue()
 // → '12/34/5678'
+
+/* Backspacing is supported */
 mask.backspace()
 // → true
 mask.getValue()
 // → '12/34/567_'
+
+/* Editing operations also know how to deal with selected ranges */
 mask.selection = {start: 0, end: 9}
 mask.backspace()
 // → true
@@ -53,10 +70,10 @@ Constructs a new `InputMask` - use of `new` is optional, so these examples are
 equivalent:
 
 ```javascript
-var mask = new InputMask({pattern: '####-####', value: '12345678'})
+var mask = new InputMask({pattern: '1111-1111', value: '12345678'})
 ```
 ```javascript
-var mask = InputMask({pattern: '####-####', value: '12345678'})
+var mask = InputMask({pattern: '1111-1111', value: '12345678'})
 ```
 
 ## `InputMask` public properties, getters & setters
@@ -69,12 +86,12 @@ If `start` and `end` are the same, this indicates the current cursor position in
 the string, otherwise it indicates a range of selected characters within the
 string.
 
-`selection` will be updated as necesary by editing methods, e.g. if you `input()`
-a valid character, `selection` will be updated to place the cursor after the
-newly-inserted character.
+`selection` will be updated as necessary by editing methods, e.g. if you
+`input()` a valid character, `selection` will be updated to place the cursor
+after the newly-inserted character.
 
-You are responsible for ensuring the selection is accurate before calling any
-editing methods.
+If you're using `InputMask` as the backend for an input mask in a GUI, make
+sure `selection` is accurate before calling any editing methods!
 
 ### `setSelection(selection: Selection)` : `boolean`
 
@@ -82,8 +99,8 @@ Sets the selection and performs an editable cursor range check if the selection
 change sets the cursor position (i.e. `start` and `end` are the same).
 
 If the mask's pattern begins or ends with static characters, this method will
-prevent the cursor being placed prior to the first editable character or beyond
-the last editable character. Only use this method to set `selection` if this is
+prevent the cursor being placed prior to a leading static character or beyond a
+tailing static character. Only use this method to set `selection` if this is
 the behaviour you want.
 
 Returns `true` if the selection needed to be adjusted as described above,
@@ -167,8 +184,8 @@ Pasted input may optionally contain static parts of the mask's pattern.
 
 ## Types
 
-These type definitions are purely for reference, not part of the API exposed by
-this module.
+These type definitions are purely for reference, they're not part of the
+API exported by this module.
 
 ### `Selection` : `{start: number; end: number}`
 
@@ -184,8 +201,9 @@ Options for the `InputMask` constructor.
 
 A masking pattern. The following characters signify editable parts of the mask:
 
-* `#` - numeric character
-* ...more TBD
+* `1` - number
+* `A` - letter
+* `*` - alphanumeric
 
 All other characters are treated as static.
 
@@ -194,10 +212,12 @@ an `Error` will be thrown.
 
 ##### Example patterns
 
-* Credit card number: `#### #### #### ####`
-* Date: `##/##/####`
-* ISO date: `####-##-##`
-* Time: `##:##`
+* Credit card number: `1111 1111 1111 1111`
+* Date: `11/11/1111`
+* ISO date: `1111-11-11`
+* Time: `11:11`
+* Canadian postal code: `A1A 1A1`
+* Norn Iron license plate: `AAA 1111`
 
 #### `value`
 
