@@ -22,7 +22,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(6)
+  t.plan(8)
 
   t.throws(function() { new InputMask },
            /InputMask: you must provide a pattern./,
@@ -38,6 +38,10 @@ test('Constructor options', function(t) {
   mask = new InputMask({pattern: '---111---'})
   t.equal(mask.pattern.firstEditableIndex, 3, 'Partial range first editable index calculation')
   t.equal(mask.pattern.lastEditableIndex, 5, 'Partial range last editable index calculation')
+  t.deepEqual(mask.selection, {start: 3, end: 3}, 'Default selection goes to first editable character')
+
+  mask = new InputMask({pattern: '-1-1-1-', value: '987'})
+  t.equal(mask.getValue(), '-9-8-7-', 'Initial value is formatted')
 })
 
 test('Placeholder characters', function(t) {
