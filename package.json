@@ -20,6 +20,5 @@
     "uglifyjs": "^2.4.10"
   },
   "dependencies": {
-    "object-assign": "^2.0.0"
   }
 }
