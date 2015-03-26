@@ -209,6 +209,8 @@ The following characters signify editable parts of the mask:
 
 * `1` - number
 * `A` - letter
+* '>' - letter, which will be forced to upper case when entered
+* '<' - letter, which will be forced to lower case when entered
 * `*` - alphanumeric
 
 If you need to include one of these characters as a static part of the mask, you

@@ -1,6 +1,10 @@
 ## master
 
-Added the ability for formatting character definitions to transform valid input.
+Added the ability for format character definitions to transform valid input.
+
+Added new format characters:
+* '>' - letter, which will be transformed to upper case
+* '<' - letter, which will be transformed to lower case
 
 ## 1.1.0 / 2015-03-25
 
@@ -15,7 +19,7 @@ Added a `mask.emptyValue` property for convenient comparison.
 Initial realease features:
 
 * Fixed-width masking pattern
-* Editable character placeholders:
+* Format characters:
   * `1` - number
   * `A` - letter
   * `*` - alphanumeric
