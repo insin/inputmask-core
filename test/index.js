@@ -51,8 +51,8 @@ test('Constructor options', function(t) {
 
 test('Formatting characters', function(t) {
   t.plan(1)
-  var mask = new InputMask({pattern: '1A**><', value: '9f9fzZ'})
-  t.equal(mask.getValue(), '9f9fZz', 'All values, no placeholders')
+  var mask = new InputMask({pattern: '1a**A#', value: '9f9fzz'})
+  t.equal(mask.getValue(), '9f9fZZ', 'All values, no placeholders')
 })
 
 test('Escaping placeholder characters', function(t) {

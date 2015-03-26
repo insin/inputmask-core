@@ -3,8 +3,10 @@
 Added the ability for format character definitions to transform valid input.
 
 Added new format characters:
-* '>' - letter, which will be transformed to upper case
-* '<' - letter, which will be transformed to lower case
+* 'A` - letter, which will be transformed to upper case
+* `#` - alphanumeric, which will be transformed to upper case
+
+Changed letter format character to `a`
 
 ## 1.1.0 / 2015-03-25
 
