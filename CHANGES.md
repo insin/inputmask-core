@@ -5,11 +5,11 @@ as an option to the `InputMask` constructor.
 
 Added the ability for format character definitions to transform valid input.
 
-Added new format characters:
-* 'A` - letter, which will be transformed to upper case
-* `#` - alphanumeric, which will be transformed to upper case
-
 Changed letter format character to `a`
+
+Added new format characters:
+* `A` - letter, which will be transformed to upper case
+* `#` - alphanumeric, which will be transformed to upper case
 
 ## 1.1.0 / 2015-03-25
 
