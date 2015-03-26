@@ -22,7 +22,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(11)
+  t.plan(12)
 
   t.throws(function() { new InputMask },
            /InputMask: you must provide a pattern./,
@@ -47,6 +47,26 @@ test('Constructor options', function(t) {
   mask.setPattern('--11--', '99')
   t.equal(mask.getValue(), '--99--', 'New pattern value is set')
   t.equal(mask.emptyValue, '--__--', 'emptyValue is updated after setPattern')
+
+  // Custom format characters can be configured per-mask
+  mask = new InputMask({
+    pattern: 'lll1*',
+    value: 'ABC+',
+    formatCharacters: {
+      // Passing null for an existing format character disables it
+      '1': null,
+      // Passing an existing format character overrides it
+      '*': {
+        validate: function(char) { return /[+-/*]/.test(char) }
+      },
+      // Define a new format character which lowercases letter input
+      'l': {
+        validate: function(char) { return /^[A-Za-z]$/.test(char) },
+        transform: function(char) { return char.toLowerCase() }
+      }
+    }
+  })
+  t.equal(mask.getValue(), 'abc1+', 'Custom formatting charactes are used')
 })
 
 test('Formatting characters', function(t) {

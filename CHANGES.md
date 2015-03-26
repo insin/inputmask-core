@@ -1,5 +1,8 @@
 ## master
 
+Added customisation of format characters by passing a `formatCharacters` object
+as an option to the `InputMask` constructor.
+
 Added the ability for format character definitions to transform valid input.
 
 Added new format characters:

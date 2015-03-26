@@ -61,20 +61,110 @@ mask.getValue()
 
 ## API
 
-See the [Types](#types) section below for type definitions referenced in this
-section.
-
-## `InputMask(options: `[`InputMaskOptions`](#inputmaskoptions)`)`
+## `InputMask(options: Object)`
 
 Constructs a new `InputMask` - use of `new` is optional, so these examples are
 equivalent:
 
 ```javascript
-var mask = new InputMask({pattern: '1111-1111', value: '12345678'})
+var mask = new InputMask({pattern: '1111-1111', value: '1234-5678'})
 ```
 ```javascript
-var mask = InputMask({pattern: '1111-1111', value: '12345678'})
+var mask = InputMask({pattern: '1111-1111', value: '1234-5678'})
 ```
+
+## ``InputMask`` options
+
+### `pattern`
+
+A masking pattern must be provided and must contain at least one editable
+character, or an `Error` will be thrown.
+
+The following format characters define editable parts of the mask:
+
+* `1` - number
+* `a` - letter
+* `A` - letter, forced to upper case when entered
+* `*` - alphanumeric
+* `#` - alphanumeric, forced to upper case when entered
+
+If you need to include one of these characters as a static part of the mask, you
+can escape them with a preceding backslash:
+
+```javascript
+var mask = new InputMask({pattern: '\\A11 \\1AA', value: 'A99 1ZZ'})
+mask.getValue()
+// → 'A99 1ZZ'
+```
+
+If you need to include a static backslash in a pattern, you must escape it:
+
+```javascript
+var mask = new InputMask({pattern: '\\\\A11\\\\', value: 'Z98'})
+mask.getValue()
+// → '\\Z98\\'
+```
+
+Otherwise, all other characters are treated as static parts of the pattern.
+
+#### Example patterns
+
+* Credit card number: `1111 1111 1111 1111`
+* Date: `11/11/1111`
+* ISO date: `1111-11-11`
+* Time: `11:11`
+* Canadian postal code: `A1A 1A1`
+* Norn Iron license plate: `AAA 1111`
+
+### `formatCharacters`
+
+An object defining additional custom format characters to use in the mask's
+pattern.
+
+When defining a new format character, a `validate()` function is required and
+a `format()` function can optionally be defined to modify the validated
+character before adding it to the mask's value.
+
+For example this is how you would define `w` as a new format character which
+accepts word character input (alphanumeric or underscore) and forces it to lower
+case when entered:
+
+```javascript
+var mask = new InputMask({
+  pattern: 'Awwwww', // An uppercase letter followed by 5 word characters
+  formatCharacters: {
+    'w': {
+      validate: function(char) { return /\w/.test(char) }
+      format: function(char) { return char.toLowerCase() }
+    }
+  }
+})
+```
+
+To override a built-in format character, pass its character as a property of
+this object along iwht the new definition.
+
+To disable a built-in format character, pass its character as a property of this
+object with a `null` value:
+
+```javascript
+var mask = new InputMask({
+  pattern: 'A1111', // Treats the 'A' as static
+  formatCharacters: {
+    'A': null
+  }
+})
+```
+
+### `value`
+
+An optional initial value for the mask - see [`setValue()`](#setvaluevalue-string)
+above for more details.
+
+### `selection`
+
+An optional default selection - see [`selection`](#selection-selection)
+above for more details.
 
 ## `InputMask` public properties, getters & setters
 
@@ -82,9 +172,10 @@ var mask = InputMask({pattern: '1111-1111', value: '12345678'})
 
 The value the mask will have when none of its editable data has been filled in.
 
-### `selection` : `Selection`
+### `selection` : `{start: number; end: number}`
 
-The current selection within the input.
+The current selection within the input represented as an object with `start` and
+`end` properties, where `end >= start`.
 
 If `start` and `end` are the same, this indicates the current cursor position in
 the string, otherwise it indicates a range of selected characters within the
@@ -97,7 +188,7 @@ after the newly-inserted character.
 If you're using `InputMask` as the backend for an input mask in a GUI, make
 sure `selection` is accurate before calling any editing methods!
 
-### `setSelection(selection: Selection)` : `boolean`
+### `setSelection(selection: {start: number; end: number})` : `boolean`
 
 Sets the selection and performs an editable cursor range check if the selection
 change sets the cursor position (i.e. `start` and `end` are the same).
@@ -185,73 +276,5 @@ within the input is determined to be invalid, the entire paste operation fails
 and the mask's value and selection are unaffected.
 
 Pasted input may optionally contain static parts of the mask's pattern.
-
-## Types
-
-These type definitions are purely for reference, they're not part of the
-API exported by this module.
-
-### `Selection` : `{start: number; end: number}`
-
-An object with `start` and `end` properties, where `end >= start`.
-
-### `InputMaskOptions`
-
-#### `{pattern: string, value: ?string, selection: ?Selection}`
-
-Options for the `InputMask` constructor.
-
-#### `pattern`
-
-A masking pattern.
-
-The following characters signify editable parts of the mask:
-
-* `1` - number
-* `a` - letter
-* 'A' - letter, forced to upper case when entered
-* `*` - alphanumeric
-* `#` - alphanumeric, forced to upper case when entered
-
-If you need to include one of these characters as a static part of the mask, you
-can escape them with a preceding backslash:
-
-```javascript
-var mask = new InputMask({pattern: '\\A11 \\1AA', value: 'A99 1ZZ'})
-mask.getValue()
-// → 'A99 1ZZ'
-```
-
-If you need to include a static backslash in a pattern, you must escape it:
-
-```javascript
-var mask = new InputMask({pattern: '\\\\A11\\\\', value: 'Z98'})
-mask.getValue()
-// → '\\Z98\\'
-```
-
-Otherwise, all other characters are treated as static parts of the pattern.
-
-A pattern must be provided and must contain at least one editable character, or
-an `Error` will be thrown.
-
-##### Example patterns
-
-* Credit card number: `1111 1111 1111 1111`
-* Date: `11/11/1111`
-* ISO date: `1111-11-11`
-* Time: `11:11`
-* Canadian postal code: `A1A 1A1`
-* Norn Iron license plate: `AAA 1111`
-
-#### `value`
-
-An optional initial value for the mask - see [`setValue()`](#setvaluevalue-string)
-above for more details.
-
-#### `selection`
-
-An optional default selection - see [`selection`](#selection-selection)
-above for more details.
 
 ## MIT Licensed
