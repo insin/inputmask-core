@@ -1,4 +1,4 @@
-## master
+## 1.2.0 / 2015-03-26
 
 Added customisation of format characters by passing a `formatCharacters` object
 as an option to the `InputMask` constructor.
