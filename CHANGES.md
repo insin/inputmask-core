@@ -1,3 +1,7 @@
+## master
+
+Added the ability for formatting character definitions to transform valid input.
+
 ## 1.1.0 / 2015-03-25
 
 Added the ability to escape special pattern characters with a leading backslash
