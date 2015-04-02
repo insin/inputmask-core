@@ -64,14 +64,14 @@ mask.undo()
 mask.getValue()
 // → '12/34/567_'
 mask.selection
-// → {start: 0, end: 9})
+// → {start: 0, end: 9}
 
 /* Redo is supported */
 mask.redo()
 mask.getValue()
 // → '__/__/____'
 mask.selection
-// → {start: 0, end: 0})
+// → {start: 0, end: 0}
 ```
 
 ## API
