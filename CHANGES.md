@@ -25,7 +25,7 @@ Added a `mask.emptyValue` property for convenient comparison.
 
 ## 1.0.0 / 2015-03-25
 
-Initial realease features:
+Initial release features:
 
 * Fixed-width masking pattern
 * Format characters:
