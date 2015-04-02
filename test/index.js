@@ -4,6 +4,28 @@ var test = require('tape')
 
 var InputMask = require('../lib')
 
+test('README example', function(t) {
+  var mask = new InputMask({pattern: '11/11/1111'})
+  t.false(mask.input('a'), 'Invalid input is rejected')
+  t.true(mask.input('1'), 'Valid input is accepted')
+  t.equal(mask.getValue(), '1_/__/____')
+  t.deepEqual(mask.selection, {start: 1, end: 1}, 'Editing operations update the cursor position')
+  t.true(mask.paste('2345678'), 'Pasting is supported')
+  t.equal(mask.getValue(), '12/34/5678')
+  t.true(mask.backspace(), 'Backspacing is supported')
+  t.equal(mask.getValue(), '12/34/567_')
+  mask.selection = {start: 0, end: 9}
+  t.true(mask.backspace(), 'Editing operations also know how to deal with selected ranges')
+  t.equal(mask.getValue(), '__/__/____')
+  t.true(mask.undo(), 'Undo is supported')
+  t.equal(mask.getValue(), '12/34/567_')
+  t.deepEqual(mask.selection, {start: 0, end: 9})
+  t.true(mask.redo(), 'Redo is supported')
+  t.equal(mask.getValue(), '__/__/____')
+  t.deepEqual(mask.selection, {start: 0, end: 0})
+  t.end()
+})
+
 test('formatValueToPattern', function(t) {
   t.plan(7)
 
@@ -287,4 +309,67 @@ test('Setting selection', function(t) {
   // ...however a selection can span beyond the editable region
   t.false(mask.setSelection({start: 0, end: 19}), 'Selection beyond editable region not changed')
   t.deepEqual(mask.selection, {start: 0, end: 19}, 'Whole value can be selected')
+})
+
+test('History', function(t) {
+  t.plan(31)
+
+  var mask = new InputMask({pattern: 'aaa***'})
+
+  t.false(mask.undo(), 'invalid undo - nothing to undo')
+
+  t.true(mask.input('a'), 'valid input')
+  t.true(mask.input('b'), 'valid input')
+  t.true(mask.input('c'), 'valid input')
+  t.true(mask.input('d'), 'valid input')
+  t.true(mask.input('e'), 'valid input')
+  t.true(mask.input('f'), 'valid input')
+
+  t.deepEqual(mask._history, [{value: '______', selection: {start: 0, end: 0}, lastOp: null}])
+
+  t.true(mask.backspace(), 'valid input')
+  t.true(mask.backspace(), 'valid input')
+  t.true(mask.backspace(), 'valid input')
+
+  t.deepEqual(mask._history, [
+    {value: '______', selection: {start: 0, end: 0}, lastOp: null},
+    {value: 'abcdef', selection: {start: 6, end: 6}, lastOp: 'input'}
+  ])
+
+  t.true(mask.input('1'), 'valid input')
+  t.true(mask.input('2'), 'valid input')
+  t.true(mask.input('3'), 'valid input')
+
+  t.deepEqual(mask._history, [
+    {value: '______', selection: {start: 0, end: 0}, lastOp: null},
+    {value: 'abcdef', selection: {start: 6, end: 6}, lastOp: 'input'},
+    {value: 'abc___', selection: {start: 3, end: 3}, lastOp: 'backspace'}
+  ])
+
+  t.true(mask.undo(), 'valid undo')
+
+  // A new history entry will be added if the current value differs from the
+  // last value in history. This is flagged so we can remove it later if we redo
+  // back to the same point.
+  t.deepEqual(mask._history, [
+    {value: '______', selection: {start: 0, end: 0}, lastOp: null},
+    {value: 'abcdef', selection: {start: 6, end: 6}, lastOp: 'input'},
+    {value: 'abc___', selection: {start: 3, end: 3}, lastOp: 'backspace'},
+    {value: 'abc123', selection: {start: 6, end: 6}, lastOp: 'input', startUndo: true}
+  ], 'initial undo adds change since last history value to history items')
+
+  t.deepEqual([mask.getValue(), mask.selection], ['abc___', {start: 3, end: 3}])
+  t.true(mask.undo(), 'valid undo')
+  t.deepEqual([mask.getValue(), mask.selection], ['abcdef', {start: 6, end: 6}])
+  t.true(mask.undo(), 'valid undo')
+  t.deepEqual([mask.getValue(), mask.selection], ['______', {start: 0, end: 0}])
+  t.false(mask.undo(), 'invalid undo - nothing more to undo')
+
+  t.true(mask.redo(), 'valid redo')
+  t.deepEqual([mask.getValue(), mask.selection], ['abcdef', {start: 6, end: 6}])
+  t.true(mask.redo(), 'valid redo')
+  t.deepEqual([mask.getValue(), mask.selection], ['abc___', {start: 3, end: 3}])
+  t.true(mask.redo(), 'valid redo')
+  t.deepEqual([mask.getValue(), mask.selection], ['abc123', {start: 6, end: 6}])
+  t.false(mask.redo(), 'invalid redo - nothing more to redo')
 })

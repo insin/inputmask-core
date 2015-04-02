@@ -1,3 +1,7 @@
+## master
+
+Added `mask.undo()` and `mask.redo()`
+
 ## 1.2.0 / 2015-03-26
 
 Added customisation of format characters by passing a `formatCharacters` object

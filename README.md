@@ -57,6 +57,21 @@ mask.backspace()
 // → true
 mask.getValue()
 // → '__/__/____'
+
+/* Undo is supported */
+mask.undo()
+// → true
+mask.getValue()
+// → '12/34/567_'
+mask.selection
+// → {start: 0, end: 9})
+
+/* Redo is supported */
+mask.redo()
+mask.getValue()
+// → '__/__/____'
+mask.selection
+// → {start: 0, end: 0})
 ```
 
 ## API
@@ -227,7 +242,7 @@ blank, clearing the mask.
 Editing methods will not allow the string being edited to contain invalid
 values according to the mask's pattern.
 
-Any time an editing method results in either the value or the selection
+Any time an editing method results in either the `value` or the `selection`
 changing, it will return `true`.
 
 Otherwise, if an invalid (e.g. trying to input a letter where the pattern
@@ -276,5 +291,36 @@ within the input is determined to be invalid, the entire paste operation fails
 and the mask's value and selection are unaffected.
 
 Pasted input may optionally contain static parts of the mask's pattern.
+
+## `InputMask` history methods
+
+An `InputMask` creates a new history snapshot each time you:
+
+* Perform a different type of editing operation to the previous editing
+  operation.
+* Perform an editing operation with the cursor in a different position from
+  where it was left after a previous editing operation.
+* Perform an editing operation with a text selection.
+
+History methods allow you to step backwards and forwards through these
+snapshots, updating `value` and `selection` accordingly.
+
+If you perform an editing operation while stepping backwards through history
+snapshots, all snapshots after the current one will be blown away.
+
+A history method returns `true` if a valid history operation was performed and
+`value` and `selection` have been updated.
+
+Otherwise, if an invalid history operation is attempted (e.g. trying to redo
+when you've already reached the point undoing started from) it will return
+`false`.
+
+### `undo()` : `boolean`
+
+Steps backwards through history snapshots.
+
+### `redo()` : `boolean`
+
+Steps forwards through history snapshots.
 
 ## MIT Licensed
