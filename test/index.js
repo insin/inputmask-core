@@ -60,13 +60,13 @@ test('Constructor options', function(t) {
   mask = new InputMask({pattern: '---111---'})
   t.equal(mask.pattern.firstEditableIndex, 3, 'Partial range first editable index calculation')
   t.equal(mask.pattern.lastEditableIndex, 5, 'Partial range last editable index calculation')
-  t.deepEqual(mask.selection, {start: 3, end: 3}, 'Default selection goes to first editable character')
+  t.deepEqual(mask.selection, {start: 0, end: 0}, 'Default selection is set as-is')
 
   mask = new InputMask({pattern: '-1-1-1-', value: '987'})
   t.equal(mask.getValue(), '-9-8-7-', 'Initial value is formatted')
   t.equal(mask.emptyValue, '-_-_-_-', 'emptyValue checks out')
 
-  mask.setPattern('--11--', '99')
+  mask.setPattern('--11--', {value: '99'})
   t.equal(mask.getValue(), '--99--', 'New pattern value is set')
   t.equal(mask.emptyValue, '--__--', 'emptyValue is updated after setPattern')
 

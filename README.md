@@ -171,71 +171,14 @@ var mask = new InputMask({
 })
 ```
 
-### `value`
+### `value` : `string`
 
-An optional initial value for the mask - see [`setValue()`](#setvaluevalue-string)
-above for more details.
+An optional initial value for the mask.
 
-### `selection`
+### `selection` :  `{start: number; end: number}`
 
-An optional default selection - see [`selection`](#selection-selection)
-above for more details.
-
-## `InputMask` public properties, getters & setters
-
-### `emptyValue` : `string`
-
-The value the mask will have when none of its editable data has been filled in.
-
-### `selection` : `{start: number; end: number}`
-
-The current selection within the input represented as an object with `start` and
-`end` properties, where `end >= start`.
-
-If `start` and `end` are the same, this indicates the current cursor position in
-the string, otherwise it indicates a range of selected characters within the
-string.
-
-`selection` will be updated as necessary by editing methods, e.g. if you
-`input()` a valid character, `selection` will be updated to place the cursor
-after the newly-inserted character.
-
-If you're using `InputMask` as the backend for an input mask in a GUI, make
-sure `selection` is accurate before calling any editing methods!
-
-### `setSelection(selection: {start: number; end: number})` : `boolean`
-
-Sets the selection and performs an editable cursor range check if the selection
-change sets the cursor position (i.e. `start` and `end` are the same).
-
-If the mask's pattern begins or ends with static characters, this method will
-prevent the cursor being placed prior to a leading static character or beyond a
-tailing static character. Only use this method to set `selection` if this is
-the behaviour you want.
-
-Returns `true` if the selection needed to be adjusted as described above,
-`false` otherwise.
-
-### `getValue()` : `string`
-
-Gets the current value in the mask, which will always conform to the mask's
-pattern.
-
-### `setValue(value: string)`
-
-Overwrites the current value in the mask.
-
-The given value will be applied to the mask's pattern, with invalid - or
-missing - editable characters replaced with placeholders.
-
-The value may optionally contain static parts of the mask's pattern.
-
-### `setPattern(pattern: string, value: ?string)`
-
-Overwrites the mask's pattern.
-
-A new value can also be provided - if not provided, the value will default to
-blank, clearing the mask.
+An optional default selection - defaults to `{start: 0, end: 0}`, placing the
+cursor before the first character.
 
 ## `InputMask` editing methods
 
@@ -306,7 +249,7 @@ History methods allow you to step backwards and forwards through these
 snapshots, updating `value` and `selection` accordingly.
 
 If you perform an editing operation while stepping backwards through history
-snapshots, all snapshots after the current one will be blown away.
+snapshots, all snapshots after the current one will be disposed of.
 
 A history method returns `true` if a valid history operation was performed and
 `value` and `selection` have been updated.
@@ -322,5 +265,69 @@ Steps backwards through history snapshots.
 ### `redo()` : `boolean`
 
 Steps forwards through history snapshots.
+
+## `InputMask` public properties, getters & setters
+
+### `emptyValue` : `string`
+
+The value the mask will have when none of its editable data has been filled in.
+
+### `selection` : `{start: number; end: number}`
+
+The current selection within the input represented as an object with `start` and
+`end` properties, where `end >= start`.
+
+If `start` and `end` are the same, this indicates the current cursor position in
+the string, otherwise it indicates a range of selected characters within the
+string.
+
+`selection` will be updated as necessary by editing methods, e.g. if you
+`input()` a valid character, `selection` will be updated to place the cursor
+after the newly-inserted character.
+
+If you're using `InputMask` as the backend for an input mask in a GUI, make
+sure `selection` is accurate before calling any editing methods!
+
+### `setSelection(selection: {start: number; end: number})` : `boolean`
+
+Sets the selection and performs an editable cursor range check if the selection
+change sets the cursor position (i.e. `start` and `end` are the same).
+
+If the mask's pattern begins or ends with static characters, this method will
+prevent the cursor being placed prior to a leading static character or beyond a
+tailing static character. Only use this method to set `selection` if this is
+the behaviour you want.
+
+Returns `true` if the selection needed to be adjusted as described above,
+`false` otherwise.
+
+### `getValue()` : `string`
+
+Gets the current value in the mask, which will always conform to the mask's
+pattern.
+
+### `setValue(value: string)`
+
+Overwrites the current value in the mask.
+
+The given value will be applied to the mask's pattern, with invalid - or
+missing - editable characters replaced with placeholders.
+
+The value may optionally contain static parts of the mask's pattern.
+
+### `setPattern(pattern: string, options: ?Object)`
+
+Sets the mask's pattern. The mask's value and selection will also be reset by
+default.
+
+#### `setPattern` options
+
+##### `value` : `string`
+
+A value to be applied to the new pattern - defaults to `''`.
+
+##### `selection` : `{start: number; end: number}`
+
+Selection after the new pattern is applied - defaults to `{start: 0, end: 0}`.
 
 ## MIT Licensed
