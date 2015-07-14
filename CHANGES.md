@@ -1,3 +1,5 @@
+## 2.0.1 / 2015-07-14
+
 Fixed taking input for patterns with leading static parts when the cursor or entire selection is in the static part.
 
 ## 2.0.0 / 2015-04-03
