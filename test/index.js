@@ -176,6 +176,18 @@ test('Input with selected range', function(t) {
   t.deepEqual(mask.selection, {start: 7, end: 7}, 'Cursor was placed after first editable character')
 })
 
+test('Leading static characters', function(t) {
+  t.plan(2)
+
+  // Input should be applied to the first editable character if the cursor or
+  // selection start is prior to it.
+  var mask = new InputMask({
+    pattern: '(0) 111 111'
+  })
+  t.true(mask.input('5'), 'Valid input accepted')
+  t.equal(mask.getValue(), '(0) 5__ ___')
+})
+
 test('Skipping multiple static characters', function(t) {
   t.plan(3)
 
