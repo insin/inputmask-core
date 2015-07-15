@@ -320,6 +320,24 @@ Returns `true` if the selection needed to be adjusted as described above,
 Gets the current value in the mask, which will always conform to the mask's
 pattern.
 
+### `getRawValue()` : `string`
+
+Gets the current value in the mask without non-editable pattern characters.
+
+This can be useful when changing the mask's pattern, to "replay" the user's input so far into the new patten:
+
+```javascript
+var mask = new InputMask({pattern: '1111 1111', value: '98781'})
+mask.getValue()
+// → '9878 1___'
+mask.getRawValue()
+// → '98781'
+
+mask.setPattern('111 111', {value: mask.getRawValue()})
+mask.getValue()
+// → '987 81_'
+```
+
 ### `setValue(value: string)`
 
 Overwrites the current value in the mask.
