@@ -44,7 +44,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(16)
+  t.plan(19)
 
   t.throws(function() { new InputMask },
            /InputMask: you must provide a pattern./,
@@ -79,6 +79,13 @@ test('Constructor options', function(t) {
   t.equal(mask.emptyValue, '--##--', 'emptyValue with updated placeholderChar')
   t.equal(mask.getValue(), '--98--',
           'Initial value is formatted with another different placeholderChar')
+
+  mask = new InputMask({pattern: '1111 1111', value: '98781'})
+  t.equal(mask.getValue(), '9878 1___', 'Intial value is correct')
+  mask.setPattern('111 111', {value: mask.getRawValue()})
+  t.equal(mask.getValue(), '987 81_', 'Mask is updated with no spaces')
+  mask.setPattern('11 11', {value: mask.getRawValue()})
+  t.equal(mask.getValue(), '98 78', 'Value is truncated to fit')
 
   // Custom format characters can be configured per-mask
   mask = new InputMask({
