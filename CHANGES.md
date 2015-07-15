@@ -1,6 +1,12 @@
+## 2.1.0 / 2015-07-15
+
+Added `mask.getRawValue()` to get the user's raw input, without any non-editable placeholder characters. [[muffinresearch][muffinresearch]]
+
+Added customisation of the character used to fill in editable slots for which these is no input yet, by passing a single-character `placeholderChar` string as an option to the `InputMask` constructor. [[muffinresearch][muffinresearch]]
+
 ## 2.0.1 / 2015-07-14
 
-Fixed taking input for patterns with leading static parts when the cursor or entire selection is in the static part.
+Fixed taking input for patterns with leading static parts when the cursor or entire selection is in the static part. [[jordansexton][jordansexton]]
 
 ## 2.0.0 / 2015-04-03
 
@@ -52,3 +58,6 @@ Initial release features:
   * Single character input
   * Pasting a string
   * Backspacing
+
+[jordansexton]: https://github.com/jordansexton
+[muffinresearch]: https://github.com/muffinresearch
