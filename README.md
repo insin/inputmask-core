@@ -171,6 +171,20 @@ var mask = new InputMask({
 })
 ```
 
+### `placeholderChar` : `string`
+
+The character which is used to fill in editable slots for which these is no input yet when getting the mask's current value.
+
+Defaults to `'_'`; must be a single character.
+
+```javascript
+var mask = new InputMask({pattern: '11/11/1111', placeholderChar: ' '})
+mask.input('1')
+// → true
+mask.getValue()
+// → '1 /  /    '
+```
+
 ### `value` : `string`
 
 An optional initial value for the mask.
