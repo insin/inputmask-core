@@ -44,7 +44,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(12)
+  t.plan(16)
 
   t.throws(function() { new InputMask },
            /InputMask: you must provide a pattern./,
@@ -69,6 +69,16 @@ test('Constructor options', function(t) {
   mask.setPattern('--11--', {value: '99'})
   t.equal(mask.getValue(), '--99--', 'New pattern value is set')
   t.equal(mask.emptyValue, '--__--', 'emptyValue is updated after setPattern')
+
+  // Custom placeholder char can be provided.
+  mask = new InputMask({pattern: '--11--', value: '98', placeholderChar: ' '})
+  t.equal(mask.getValue(), '--98--', 'Initial value is formatted as expected')
+  t.equal(mask.emptyValue, '--  --', 'emptyValue checks out with custom placeholderChar')
+
+  mask = new InputMask({pattern: '--11--', value: '98', placeholderChar: '#'})
+  t.equal(mask.emptyValue, '--##--', 'emptyValue with updated placeholderChar')
+  t.equal(mask.getValue(), '--98--',
+          'Initial value is formatted with another different placeholderChar')
 
   // Custom format characters can be configured per-mask
   mask = new InputMask({
@@ -167,7 +177,7 @@ test('Input with selected range', function(t) {
   t.true(mask.input('2'), 'Valid input accepted')
   t.equal(mask.getValue(), '1234 12__ __34 1234', 'Only blanks out input positions')
 
-  // If a range of charactes are selected and the first character was contained
+  // If a range of characters are selected and the first character was contained
   // in the range, any input given should apply to it.
   mask = new InputMask({pattern: '----- 1111 1111'})
   mask.selection = {start: 0, end: 15}
@@ -186,6 +196,23 @@ test('Leading static characters', function(t) {
   })
   t.true(mask.input('5'), 'Valid input accepted')
   t.equal(mask.getValue(), '(0) 5__ ___')
+})
+
+test('Providing a custom placeholder character', function(t) {
+  t.plan(4)
+
+  var mask = new InputMask({pattern: '---- 1111', placeholderChar: ' '})
+  mask.selection = {start: 0, end: 15}
+  t.true(mask.input('3'), 'Valid input accepted with custom placeholderChar')
+  t.equal(mask.getValue(), '---- 3   ',
+          'Value applied to the first editable char with custom placeholderChar')
+  t.throws(function() { new InputMask({pattern: '--11', placeholderChar: '__'}) },
+           /InputMask: placeholderChar should be a single character/,
+           'placholderChar length > 1 is invalid')
+  t.throws(function() { new InputMask({pattern: '--11', placeholderChar: ''}) },
+           /InputMask: placeholderChar should be a single character/,
+           'placholderChar length < 1 is invalid')
+  t.end()
 })
 
 test('Skipping multiple static characters', function(t) {
