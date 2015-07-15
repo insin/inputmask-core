@@ -4,6 +4,7 @@
   "description": "Standalone input mask implementation, independent of any GUI",
   "main": "lib/index.js",
   "scripts": {
+    "lint": "eslint lib test",
     "test": "tape test/*.js"
   },
   "keywords": [
@@ -13,6 +14,8 @@
   "author": "Jonny Buchanan <jonathan.buchanan@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^0.24.1",
+    "eslint-config-standard": "^3.4.1",
     "tape": "^3.5.0"
   },
   "dependencies": {},

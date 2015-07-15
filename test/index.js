@@ -1,4 +1,5 @@
-'use strict';
+/* eslint-disable no-new */
+'use strict'
 
 var test = require('tape')
 
@@ -46,7 +47,7 @@ test('formatValueToPattern', function(t) {
 test('Constructor options', function(t) {
   t.plan(19)
 
-  t.throws(function() { new InputMask },
+  t.throws(function() { new InputMask() },
            /InputMask: you must provide a pattern./,
            'Pattern is required')
   t.throws(function() { new InputMask({pattern: '------'}) },
@@ -115,7 +116,8 @@ test('Formatting characters', function(t) {
 })
 
 test('Escaping placeholder characters', function(t) {
-  //t.plan(2)
+  t.plan(3)
+
   t.throws(function() { new InputMask({pattern: '\\1\\A\\*\\*'}) },
            /InputMask: pattern "\\1\\A\\\*\\\*" does not contain any editable characters./,
            'Escaped placeholders treated as static characters')
@@ -124,7 +126,6 @@ test('Escaping placeholder characters', function(t) {
            'A pattern must not end with an escape character')
   var mask = new InputMask({pattern: '\\\\\\1:1,\\A:A,\\*:*\\\\', value: '9Zg'})
   t.equal(mask.getValue(), '\\1:9,A:Z,*:g\\', 'Escape character can be escaped')
-  t.end()
 })
 
 test('Basic input', function(t) {
