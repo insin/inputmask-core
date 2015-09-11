@@ -1,3 +1,7 @@
+## 2.1.1 / 2015-09-11
+
+Fixed setting`null` or `undefined` as the mask's value - this will now be treated as if `''` had been set rather than causing an error ([#5](https://github.com/insin/inputmask-core/issues/5))
+
 ## 2.1.0 / 2015-07-15
 
 Added `mask.getRawValue()` to get the user's raw input, without any non-editable placeholder characters. [[muffinresearch][muffinresearch]]
