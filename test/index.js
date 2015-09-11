@@ -45,7 +45,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(19)
+  t.plan(21)
 
   t.throws(function() { new InputMask() },
            /InputMask: you must provide a pattern./,
@@ -107,6 +107,12 @@ test('Constructor options', function(t) {
     }
   })
   t.equal(mask.getValue(), 'abc1+', 'Custom formatting charactes are used')
+
+  // Value can be null or undefined
+  mask = new InputMask({pattern: '111 111', value: null})
+  t.equal(mask.getValue(), '___ ___', 'null value treated as blank')
+  mask = new InputMask({pattern: '111 111', value: undefined})
+  t.equal(mask.getValue(), '___ ___', 'undefined value treated as blank')
 })
 
 test('Formatting characters', function(t) {
