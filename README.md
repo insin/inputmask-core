@@ -146,7 +146,7 @@ var mask = new InputMask({
 })
 ```
 
-To override a built-in format character, pass its character as a property of this object along iwht the new definition.
+To override a built-in format character, pass its character as a property of this object along with the new definition.
 
 To disable a built-in format character, pass its character as a property of this object with a `null` value:
 
@@ -161,7 +161,7 @@ var mask = new InputMask({
 
 ### `placeholderChar` : `string`
 
-The character which is used to fill in editable slots for which these is no input yet when getting the mask's current value.
+The character which is used to fill in editable slots for which there is no input yet when getting the mask's current value.
 
 Defaults to `'_'`; must be a single character.
 
