@@ -140,7 +140,7 @@ var mask = new InputMask({
   formatCharacters: {
     'w': {
       validate: function(char) { return /\w/.test(char) }
-      format: function(char) { return char.toLowerCase() }
+      transform: function(char) { return char.toLowerCase() }
     }
   }
 })
