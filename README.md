@@ -132,6 +132,11 @@ An object defining additional custom format characters to use in the mask's patt
 
 When defining a new format character, a `validate()` function is required and a `format()` function can optionally be defined to modify the validated character before adding it to the mask's value.
 
+Two parameters are passed to the `validate()` function:
+
+* `char` (string) — represents character
+* `value` (array) — represents current input value (with static symbols)
+
 For example this is how you would define `w` as a new format character which accepts word character input (alphanumeric or underscore) and forces it to lower case when entered:
 
 ```javascript
@@ -139,7 +144,7 @@ var mask = new InputMask({
   pattern: 'Awwwww', // An uppercase letter followed by 5 word characters
   formatCharacters: {
     'w': {
-      validate: function(char) { return /\w/.test(char) }
+      validate: function(char, value) { return /\w/.test(char) }
       transform: function(char) { return char.toLowerCase() }
     }
   }

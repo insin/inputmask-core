@@ -1,3 +1,7 @@
+## 2.1.2 / 2016-03-17
+
+Add new parameter `value` passed to a function `validate()` for custom format characters.
+
 ## 2.1.1 / 2015-09-11
 
 Fixed setting`null` or `undefined` as the mask's value - this will now be treated as if `''` had been set rather than causing an error ([#5](https://github.com/insin/inputmask-core/issues/5))
