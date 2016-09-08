@@ -45,7 +45,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(21)
+  t.plan(24)
 
   t.throws(function() { new InputMask() },
            /InputMask: you must provide a pattern./,
@@ -113,6 +113,14 @@ test('Constructor options', function(t) {
   t.equal(mask.getValue(), '___ ___', 'null value treated as blank')
   mask = new InputMask({pattern: '111 111', value: undefined})
   t.equal(mask.getValue(), '___ ___', 'undefined value treated as blank')
+
+  // Mask is progressive
+  mask = new InputMask({pattern: '111-1111 x 111', value: '47', isRevealingMask: true})
+  t.equal(mask.getValue(), '47', 'no mask characters or placeholders are revealed')
+  mask = new InputMask({pattern: '111-1111 x 111', value: '476', isRevealingMask: true})
+  t.equal(mask.getValue(), '476-', 'mask is revealed up to the next editable character')
+  mask = new InputMask({pattern: '111-1111 x 111', value: '47 3191', isRevealingMask: true})
+  t.equal(mask.getValue(), '47_-3191 x ', 'mask is revealed up to the last value')
 })
 
 test('Formatting characters', function(t) {
