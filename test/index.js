@@ -213,7 +213,7 @@ test('Leading static characters', function(t) {
 })
 
 test('Providing a custom placeholder character', function(t) {
-  t.plan(4)
+  t.plan(5)
 
   var mask = new InputMask({pattern: '---- 1111', placeholderChar: ' '})
   mask.selection = {start: 0, end: 15}
@@ -221,11 +221,15 @@ test('Providing a custom placeholder character', function(t) {
   t.equal(mask.getValue(), '---- 3   ',
           'Value applied to the first editable char with custom placeholderChar')
   t.throws(function() { new InputMask({pattern: '--11', placeholderChar: '__'}) },
-           /InputMask: placeholderChar should be a single character/,
+           /InputMask: placeholderChar should be a single character or an empty string./,
            'placholderChar length > 1 is invalid')
-  t.throws(function() { new InputMask({pattern: '--11', placeholderChar: ''}) },
-           /InputMask: placeholderChar should be a single character/,
-           'placholderChar length < 1 is invalid')
+
+  // With an empty string as the placeholderChar
+  mask = new InputMask({pattern: '---- 1111', placeholderChar: ''})
+  mask.selection = {start: 0, end: 15}
+  t.true(mask.input('3'), 'Valid input accepted with empty string placeholderChar')
+  t.equal(mask.getValue(), '---- 3',
+          'Value applied to the first editable char with empty string placeholderChar')
   t.end()
 })
 
