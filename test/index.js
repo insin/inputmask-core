@@ -294,6 +294,58 @@ test('Backspace with selected range', function(t) {
   t.deepEqual(mask.selection, {start: 6, end: 6}, 'Cursor placed before first character in selection')
 })
 
+test('Basic deleting', function(t) {
+  t.plan(24)
+
+  var mask = new InputMask({
+    pattern: '1111 1111 1111 1111',
+    value: '1234123412341234'
+  })
+  mask.selection = {start: 19, end: 19}
+  t.false(mask.delete(), 'Delete with cursor at end of input is ignored')
+  mask.selection = {start: 0, end: 0}
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  // Deleting doesn't automatically skip characters, as we can't tell when
+  // the user intends to start making input again, so it just steps over static
+  // parts of the mask when you delete with the cursor ahead of them.
+  t.true(mask.delete(), 'Skipped over blank')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.equal(mask.getValue(), '____ ____ 1234 1234', 'Intermediate value')
+  t.deepEqual(mask.selection, {start: 9, end: 9}, 'Cursor remains in end of last deleted character')
+  t.true(mask.delete(), 'Skipped over blank')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Skipped over blank')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.equal(mask.getValue(), '____ ____ ____ ____', 'Final value')
+  t.deepEqual(mask.selection, {start: 19, end: 19}, 'Cursor ended up at the end of input')
+})
+
+test('Delete with selected range', function(t) {
+  t.plan(4)
+
+  var mask = new InputMask({
+    pattern: '1111 1111 1111 1111',
+    value: '1234123412341234'
+  })
+  t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
+  mask.selection = {start: 6, end: 8}
+  t.true(mask.delete(), 'Valid delete accepted')
+  t.equal(mask.getValue(), '1234 1__4 1234 1234', 'Other selected characters are blanked out')
+  t.deepEqual(mask.selection, {start: 8, end: 8}, 'Cursor placed before first character in selection')
+})
+
 test('Pasting', function(t) {
   t.plan(10)
 
