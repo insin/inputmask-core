@@ -1,3 +1,9 @@
+## 2.2.0 / 2016-09-15
+
+Fixed placeholderChar to allow `''`
+Fixed `setSelection` to set the selection to the end of the prior value chunk (user-input value)
+Added `isRevealingMask` property
+
 ## 2.1.1 / 2015-09-11
 
 Fixed setting`null` or `undefined` as the mask's value - this will now be treated as if `''` had been set rather than causing an error ([#5](https://github.com/insin/inputmask-core/issues/5))
