@@ -186,9 +186,9 @@ An optional default selection - defaults to `{start: 0, end: 0}`, placing the cu
 An optional property that, if true, progressively shows the mask as input is entered. Defaults to `false`
 
 Example:
-Given an input with a mask of '111-1111 x 111', a value of '47', and `isRevealingMask` set to `true`, then the input's value is formatted as '47'
-Given the same input but with a value of '476', then the input's value is formatted as '476-'
-Given the same input but with a value of '47 3191', then the input's value is formatted as '47_-3191 x '
+Given an input with a mask of `111-1111 x 111`, a value of `47`, and `isRevealingMask` set to `true`, then the input's value is formatted as `47`
+Given the same input but with a value of `476`, then the input's value is formatted as `476-`
+Given the same input but with a value of `47 3191`, then the input's value is formatted as `47_-3191 x `
 
 ## `InputMask` editing methods
 

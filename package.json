@@ -1,6 +1,6 @@
 {
   "name": "inputmask-core",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Standalone input mask implementation, independent of any GUI",
   "main": "lib/index.js",
   "scripts": {
