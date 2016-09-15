@@ -348,7 +348,7 @@ test('Pasting with leading static pattern in selection', function(t) {
 })
 
 test('Setting selection', function(t) {
-  t.plan(8)
+  t.plan(16)
 
   var mask = new InputMask({pattern: '----- [[11 1111 ]]-'})
   t.equal(mask.pattern.firstEditableIndex, 8, 'First editable index calculation')
@@ -358,10 +358,24 @@ test('Setting selection', function(t) {
   t.deepEqual(mask.selection, {start: 8, end: 8}, 'Cursor placed at first editable character')
   // ...or beyond the last editable character
   t.true(mask.setSelection({start: 18, end: 18}), 'Cursor after editable region is changed')
-  t.deepEqual(mask.selection, {start: 15, end: 15}, 'Cursor placed after last editable character')
+  t.deepEqual(mask.selection, {start: 8, end: 8}, 'Cursor placed after last editable character')
   // ...however a selection can span beyond the editable region
   t.false(mask.setSelection({start: 0, end: 19}), 'Selection beyond editable region not changed')
   t.deepEqual(mask.selection, {start: 0, end: 19}, 'Whole value can be selected')
+
+  var mask = new InputMask({pattern: '----- [[11 1111 ]]-', value: '23  45'})
+  // Setting the selection before the first editable index moves selection to first editable index
+  t.true(mask.setSelection({start: 0, end: 0}), 'Cursor before editable region, regardless of value, is changed')
+  t.deepEqual(mask.selection, {start: 8, end: 8}, 'Cursor placed at first editable character, regardless of value')
+  // Setting the selection within the value works as expected
+  t.true(mask.setSelection({start: 9, end: 9}), 'Cursor within value is not changed')
+  t.deepEqual(mask.selection, {start: 9, end: 9}, 'Cursor stays within value')
+  // Setting the selection after the last editable index moves selection to the next editable index after the last value
+  t.true(mask.setSelection({start: 18, end: 18}), 'Cursor after editable region is changed, regardless of value')
+  t.deepEqual(mask.selection, {start: 14, end: 14}, 'Cursor placed at first editable character after last value')
+  // Setting the selection after (but not within) a value moves selection to the next editable index after the previous value
+  t.true(mask.setSelection({start: 11, end: 11}), 'Cursor after editable region with values both before and after it is changed')
+  t.deepEqual(mask.selection, {start: 10, end: 10}, 'Cursor placed at first editable character after prior value')
 })
 
 test('History', function(t) {
