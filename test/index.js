@@ -375,7 +375,7 @@ test('Setting selection', function(t) {
   t.false(mask.setSelection({start: 0, end: 19}), 'Selection beyond editable region not changed')
   t.deepEqual(mask.selection, {start: 0, end: 19}, 'Whole value can be selected')
 
-  var mask = new InputMask({pattern: '----- [[11 1111 ]]-', value: '23  45'})
+  mask = new InputMask({pattern: '----- [[11 1111 ]]-', value: '23  45'})
   // Setting the selection before the first editable index moves selection to first editable index
   t.true(mask.setSelection({start: 0, end: 0}), 'Cursor before editable region, regardless of value, is changed')
   t.deepEqual(mask.selection, {start: 8, end: 8}, 'Cursor placed at first editable character, regardless of value')
