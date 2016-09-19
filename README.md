@@ -211,6 +211,16 @@ Performs a backspace operation based on the current selection.
 
 * If the cursor is positioned after a static part of the mask, the cursor will be placed before it.
 
+### `delete()` : `boolean`
+
+Performs a delete operation based before the current selection.
+
+* If a text selection has been made, editable characters within the selection will be blanked out and the cursor will be placed at the end of the selection.
+
+* If the cursor is positioned before an editable character, that character will be blanked out and the cursor will be placed after it.
+
+* If the cursor is positioned before a static part of the mask, the cursor will be placed after it.
+
 ### `paste(input: string)`: `boolean`
 
 Applies a string of input based on the current selection.
