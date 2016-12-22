@@ -45,7 +45,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(28)
+  t.plan(24)
 
   t.throws(function() { new InputMask() },
            /InputMask: you must provide a pattern./,
@@ -120,22 +120,7 @@ test('Constructor options', function(t) {
   mask = new InputMask({pattern: '111-1111 x 111', value: '476', isRevealingMask: true})
   t.equal(mask.getValue(), '476-', 'mask is revealed up to the next editable character')
   mask = new InputMask({pattern: '111-1111 x 111', value: '47 3191', isRevealingMask: true})
-  // shouldn't this actually fail, because of an invalid character?
   t.equal(mask.getValue(), '47_-3191 x ', 'mask is revealed up to the last value')
-
-  mask = new InputMask({pattern: '111-1111 x 111', isRevealingMask: true})
-  mask.input('4')
-  mask.input('6')
-  t.equal(mask.getValue(), '46', 'no mask characters or placeholders are revealed')
-  mask.input('7')
-  t.equal(mask.getValue(), '467-', 'mask is revealed up to the next editable character')
-  mask.input(' ')
-  t.equal(mask.getValue(), '467-', 'mask rejects invalid characters')
-  mask.input('3')
-  mask.input('1')
-  mask.input('9')
-  mask.input('1')
-  t.equal(mask.getValue(), '467-3191 x ', 'mask is revealed up to the last value')
 })
 
 test('Formatting characters', function(t) {
@@ -188,6 +173,37 @@ test('Basic input', function(t) {
   t.true(mask.input('4'), 'Valid input accepted')
   t.false(mask.input('1'), 'Input ignored when cursor is at the end of the pattern')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Final value')
+})
+
+test('Revealing input', function(t) {
+  t.plan(8)
+  var mask = new InputMask({pattern: '111-1111 x 111', isRevealingMask: true})
+  mask.input('4')
+  mask.input('6')
+  t.equal(mask.getValue(), '46', 'no mask characters or placeholders are revealed')
+  mask.input('7')
+  t.equal(mask.getValue(), '467-', 'mask is revealed up to the next editable character')
+  mask.input(' ')
+  t.equal(mask.getValue(), '467-', 'mask rejects invalid characters')
+  mask.input('3')
+  mask.input('1')
+  mask.input('9')
+  mask.input('1')
+  t.equal(mask.getValue(), '467-3191 x ', 'mask is revealed up to the last value')
+  mask.backspace()
+  mask.backspace()
+  mask.backspace()
+  t.equal(mask.getValue(), '467-3191 x ', 'mask is still revealed up to the last value')
+  mask.backspace()
+  mask.backspace()
+  mask.backspace()
+  t.equal(mask.getValue(), '467-3', 'mask is hidden by backspace')
+  mask.input('1')
+  t.equal(mask.getValue(), '467-31', 'can insert after backspace')
+  mask.input('9')
+  mask.input('1')
+  t.equal(mask.getValue(), '467-3191 x ', 'mask is still revealed up to the last value after backspace')
+  //t.equal(mask.getValue(), '467-', 'backspace jumps non-editable characters')
 })
 
 test('Input with selected range', function(t) {
