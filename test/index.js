@@ -45,7 +45,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(24)
+  t.plan(28)
 
   t.throws(function() { new InputMask() },
            /InputMask: you must provide a pattern./,
@@ -120,7 +120,22 @@ test('Constructor options', function(t) {
   mask = new InputMask({pattern: '111-1111 x 111', value: '476', isRevealingMask: true})
   t.equal(mask.getValue(), '476-', 'mask is revealed up to the next editable character')
   mask = new InputMask({pattern: '111-1111 x 111', value: '47 3191', isRevealingMask: true})
+  // shouldn't this actually fail, because of an invalid character?
   t.equal(mask.getValue(), '47_-3191 x ', 'mask is revealed up to the last value')
+
+  mask = new InputMask({pattern: '111-1111 x 111', isRevealingMask: true})
+  mask.input('4')
+  mask.input('6')
+  t.equal(mask.getValue(), '46', 'no mask characters or placeholders are revealed')
+  mask.input('7')
+  t.equal(mask.getValue(), '467-', 'mask is revealed up to the next editable character')
+  mask.input(' ')
+  t.equal(mask.getValue(), '467-', 'mask rejects invalid characters')
+  mask.input('3')
+  mask.input('1')
+  mask.input('9')
+  mask.input('1')
+  t.equal(mask.getValue(), '467-3191 x ', 'mask is revealed up to the last value')
 })
 
 test('Formatting characters', function(t) {
