@@ -323,10 +323,10 @@ test('Basic Incrementing', function(t) {
   })
 
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
-  mask.selection = {start: 6, end: 8}
+  mask.selection = {start: 6, end: 6}
   t.true(mask.increment(), 'Valid increment accepted')
   t.equal(mask.getValue(), '1234 1235 1234 1234', 'Second segment is incremented')
-  t.deepEqual(mask.selection, {start: 6, end: 8}, 'Selection unchanged')
+  t.deepEqual(mask.selection, {start: 6, end: 6}, 'Selection unchanged')
 })
 
 test('Incrementing Overflow', function(t) {
@@ -366,7 +366,7 @@ test('Incrementing numeric segment', function(t) {
   })
 
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
-  mask.selection = {start: 5, end: 7}
+  mask.selection = {start: 7, end: 8}
   t.true(mask.increment(), 'Valid increment accepted')
   t.equal(mask.getValue(), '1234 1244 1234 1234', 'Second segment unchanged')
 })
@@ -380,7 +380,7 @@ test('Incrementing a single digit', function(t) {
   })
 
   t.equal(mask.getValue(), '1234 9999 1234 1234', 'Initial mask value is formatted')
-  mask.selection = {start: 5, end: 7}
+  mask.selection = {start: 7, end: 8}
   t.true(mask.increment(true), 'Valid increment accepted')
   t.equal(mask.getValue(), '1234 9909 1234 1234', 'Only the last selected digit changed')
 })
