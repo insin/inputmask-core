@@ -13,6 +13,14 @@ test('README example', function(t) {
   t.deepEqual(mask.selection, {start: 1, end: 1}, 'Editing operations update the cursor position')
   t.true(mask.paste('2345678'), 'Pasting is supported')
   t.equal(mask.getValue(), '12/34/5678')
+  var selectionAtEnd = {start: 10, end: 10}
+  t.deepEqual(mask.selection, selectionAtEnd, 'Pasting moves the cursor to the end of the paste')
+  mask.selection = {start: 7, end: 7}
+  t.true(mask.increment(), 'Can increment')
+  t.equal(mask.getValue(), '12/34/5679')
+  t.true(mask.decrement(), 'Can decrement')
+  t.equal(mask.getValue(), '12/34/5678')
+  mask.selection = selectionAtEnd
   t.true(mask.backspace(), 'Backspacing is supported')
   t.equal(mask.getValue(), '12/34/567_')
   mask.selection = {start: 0, end: 9}
@@ -304,6 +312,77 @@ test('Backspace with selected range', function(t) {
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.equal(mask.getValue(), '1234 1__4 1234 1234', 'Other selected characters are blanked out')
   t.deepEqual(mask.selection, {start: 6, end: 6}, 'Cursor placed before first character in selection')
+})
+
+test('Basic Incrementing', function(t) {
+  t.plan(4)
+
+  var mask = new InputMask({
+    pattern: '1111 1111 1111 1111',
+    value: '1234123412341234'
+  })
+
+  t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
+  mask.selection = {start: 6, end: 8}
+  t.true(mask.increment(), 'Valid increment accepted')
+  t.equal(mask.getValue(), '1234 1235 1234 1234', 'Second segment is incremented')
+  t.deepEqual(mask.selection, {start: 6, end: 8}, 'Selection unchanged')
+})
+
+test('Incrementing Overflow', function(t) {
+  t.plan(3)
+
+  var mask = new InputMask({
+    pattern: '1111 1111 1111 1111',
+    value: '1234999912341234'
+  })
+
+  t.equal(mask.getValue(), '1234 9999 1234 1234', 'Initial mask value is formatted')
+  mask.selection = {start: 6, end: 6}
+  t.true(mask.increment(), 'Valid increment accepted')
+  t.equal(mask.getValue(), '1234 0000 1234 1234', 'Second segment overflowed to zeros')
+})
+
+test('Incrementing Underflow', function(t) {
+  t.plan(3)
+
+  var mask = new InputMask({
+    pattern: '1111 1111 1111 1111',
+    value: '1234000012341234'
+  })
+
+  t.equal(mask.getValue(), '1234 0000 1234 1234', 'Initial mask value is formatted')
+  mask.selection = {start: 6, end: 6}
+  t.false(mask.decrement(), 'Underflow decrement rejected')
+  t.equal(mask.getValue(), '1234 0000 1234 1234', 'Second segment unchanged')
+})
+
+test('Incrementing numeric segment', function(t) {
+  t.plan(3)
+
+  var mask = new InputMask({
+    pattern: '1111 1111 1111 1111',
+    value: '1234123412341234'
+  })
+
+  t.equal(mask.getValue(), '1234 1234 1234 1234', 'Initial mask value is formatted')
+  mask.selection = {start: 5, end: 7}
+  t.true(mask.increment(), 'Valid increment accepted')
+  t.equal(mask.getValue(), '1234 1244 1234 1234', 'Second segment unchanged')
+})
+
+test('Incrementing a single digit', function(t) {
+  t.plan(3)
+
+  var mask = new InputMask({
+    pattern: '1111 1111 1111 1111',
+    value: '1234999912341234'
+  })
+
+  t.equal(mask.getValue(), '1234 9999 1234 1234', 'Initial mask value is formatted')
+  mask.selection = {start: 5, end: 7}
+  t.true(mask.increment(true), 'Valid increment accepted')
+  t.equal(mask.getValue(), '1234 9909 1234 1234', 'Only the last selected digit changed')
 })
 
 test('Pasting', function(t) {
