@@ -307,7 +307,7 @@ test('Backspace with selected range', function(t) {
 })
 
 test('Pasting', function(t) {
-  t.plan(10)
+  t.plan(11)
 
   var mask = new InputMask({
     pattern: '1111 1111 1111 1111'
@@ -335,6 +335,11 @@ test('Pasting', function(t) {
   // Pasted input can contain static formatting characters
   t.true(mask.paste('1234 1234 1234 1234'), 'Pasted value can contain static parts')
   t.equal(mask.getValue(), '1234 1234 1234 1234', 'Value after paste')
+
+  mask = new InputMask({
+    pattern: '1111 / 1111 / 1111 / 1111'
+  })
+  t.true(mask.paste('1234 / 1234 / 1234 / 1234'), 'Pasted value can contain several static parts')
 })
 
 test('Pasting with leading static pattern in selection', function(t) {
