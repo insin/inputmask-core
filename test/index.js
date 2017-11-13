@@ -143,7 +143,7 @@ test('Escaping placeholder characters', function(t) {
 })
 
 test('Basic input', function(t) {
-  t.plan(23)
+  t.plan(26)
 
   var mask = new InputMask({
     pattern: '1111 1111 1111 1111'
@@ -156,18 +156,21 @@ test('Basic input', function(t) {
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
-  t.deepEqual(mask.selection, {start: 5, end: 5}, 'Skipped over blank')
+  t.deepEqual(mask.selection, {start: 4, end: 4}, 'Keep in position')
   t.true(mask.input('1'), 'Valid input accepted')
+  t.deepEqual(mask.selection, {start: 6, end: 6}, 'Skipped over blank after input')
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
-  t.deepEqual(mask.selection, {start: 10, end: 10}, 'Skipped over blank')
+  t.deepEqual(mask.selection, {start: 9, end: 9}, 'Keep in position')
   t.true(mask.input('1'), 'Valid input accepted')
+  t.deepEqual(mask.selection, {start: 11, end: 11}, 'Skipped over blank')
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
-  t.deepEqual(mask.selection, {start: 15, end: 15}, 'Skipped over blank')
+  t.deepEqual(mask.selection, {start: 14, end: 14}, 'Keep in position')
   t.true(mask.input('1'), 'Valid input accepted')
+  t.deepEqual(mask.selection, {start: 16, end: 16}, 'Skipped over blank')
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
@@ -256,7 +259,7 @@ test('Skipping multiple static characters', function(t) {
 })
 
 test('Basic backspacing', function(t) {
-  t.plan(24)
+  t.plan(21)
 
   var mask = new InputMask({
     pattern: '1111 1111 1111 1111',
@@ -268,22 +271,18 @@ test('Basic backspacing', function(t) {
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
-  // Backspacking doesn't automatically skip characters, as we can't tell when
-  // the user intends to start making input again, so it just steps over static
-  // parts of the mask when you backspace with the cursor ahead of them.
-  t.true(mask.backspace(), 'Skipped over blank')
+  // Backspacking automatically skip characters, and goes to the
+  // previous valid editable character
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.equal(mask.getValue(), '1234 1234 ____ ____', 'Intermediate value')
   t.deepEqual(mask.selection, {start: 10, end: 10}, 'Cursor remains in front of last deleted character')
-  t.true(mask.backspace(), 'Skipped over blank')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
-  t.true(mask.backspace(), 'Skipped over blank')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
