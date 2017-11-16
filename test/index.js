@@ -45,7 +45,7 @@ test('formatValueToPattern', function(t) {
 })
 
 test('Constructor options', function(t) {
-  t.plan(24)
+  t.plan(25)
 
   t.throws(function() { new InputMask() },
            /InputMask: you must provide a pattern./,
@@ -118,9 +118,11 @@ test('Constructor options', function(t) {
   mask = new InputMask({pattern: '111-1111 x 111', value: '47', isRevealingMask: true})
   t.equal(mask.getValue(), '47', 'no mask characters or placeholders are revealed')
   mask = new InputMask({pattern: '111-1111 x 111', value: '476', isRevealingMask: true})
-  t.equal(mask.getValue(), '476-', 'mask is revealed up to the next editable character')
-  mask = new InputMask({pattern: '111-1111 x 111', value: '47 3191', isRevealingMask: true})
-  t.equal(mask.getValue(), '47_-3191 x ', 'mask is revealed up to the last value')
+  t.equal(mask.getValue(), '476', 'mask is revealed just after input the next editable character')
+  mask = new InputMask({pattern: '111-1111 x 111', value: '47631911', isRevealingMask: true})
+  t.equal(mask.getValue(), '476-3191 x 1', 'mask is revealed after input next valid editable input')
+  mask = new InputMask({pattern: '111-1111 x', value: '4763191', isRevealingMask: true})
+  t.equal(mask.getValue(), '476-3191 x', 'mask is revealed after input last editable character')
 })
 
 test('Formatting characters', function(t) {
@@ -143,7 +145,7 @@ test('Escaping placeholder characters', function(t) {
 })
 
 test('Basic input', function(t) {
-  t.plan(23)
+  t.plan(26)
 
   var mask = new InputMask({
     pattern: '1111 1111 1111 1111'
@@ -156,18 +158,21 @@ test('Basic input', function(t) {
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
-  t.deepEqual(mask.selection, {start: 5, end: 5}, 'Skipped over blank')
+  t.deepEqual(mask.selection, {start: 4, end: 4}, 'Keep in position')
   t.true(mask.input('1'), 'Valid input accepted')
+  t.deepEqual(mask.selection, {start: 6, end: 6}, 'Skipped over blank after input')
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
-  t.deepEqual(mask.selection, {start: 10, end: 10}, 'Skipped over blank')
+  t.deepEqual(mask.selection, {start: 9, end: 9}, 'Keep in position')
   t.true(mask.input('1'), 'Valid input accepted')
+  t.deepEqual(mask.selection, {start: 11, end: 11}, 'Skipped over blank')
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
-  t.deepEqual(mask.selection, {start: 15, end: 15}, 'Skipped over blank')
+  t.deepEqual(mask.selection, {start: 14, end: 14}, 'Keep in position')
   t.true(mask.input('1'), 'Valid input accepted')
+  t.deepEqual(mask.selection, {start: 16, end: 16}, 'Skipped over blank')
   t.true(mask.input('2'), 'Valid input accepted')
   t.true(mask.input('3'), 'Valid input accepted')
   t.true(mask.input('4'), 'Valid input accepted')
@@ -256,7 +261,7 @@ test('Skipping multiple static characters', function(t) {
 })
 
 test('Basic backspacing', function(t) {
-  t.plan(24)
+  t.plan(21)
 
   var mask = new InputMask({
     pattern: '1111 1111 1111 1111',
@@ -268,22 +273,18 @@ test('Basic backspacing', function(t) {
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
-  // Backspacking doesn't automatically skip characters, as we can't tell when
-  // the user intends to start making input again, so it just steps over static
-  // parts of the mask when you backspace with the cursor ahead of them.
-  t.true(mask.backspace(), 'Skipped over blank')
+  // Backspacking automatically skip characters, and goes to the
+  // previous valid editable character
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.equal(mask.getValue(), '1234 1234 ____ ____', 'Intermediate value')
   t.deepEqual(mask.selection, {start: 10, end: 10}, 'Cursor remains in front of last deleted character')
-  t.true(mask.backspace(), 'Skipped over blank')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
-  t.true(mask.backspace(), 'Skipped over blank')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
   t.true(mask.backspace(), 'Valid backspace accepted')
@@ -451,4 +452,21 @@ test('History', function(t) {
   t.true(mask.redo(), 'valid redo')
   t.deepEqual([mask.getValue(), mask.selection], ['abc123', {start: 6, end: 6}])
   t.false(mask.redo(), 'invalid redo - nothing more to redo')
+})
+
+test('Optional Char', function(t) {
+  t.plan(6)
+
+  var mask = new InputMask({pattern: '(11) 1?1111-1?111'})
+  t.true(mask.pattern.isOptionalIndex(5))
+  t.false(mask.pattern.isOptionalIndex(6))
+
+  t.equal(mask.getValue(), '(__) ____-___')
+
+  mask.setValue('114433350')
+  t.equal(mask.getValue(), '(11) 4433-350')
+  mask.setValue('1144333501')
+  t.equal(mask.getValue(), '(11) 4433-3501')
+  mask.setValue('11994348849')
+  t.equal(mask.getValue(), '(11) 99434-8849')
 })
