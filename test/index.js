@@ -27,6 +27,13 @@ test('README example', function(t) {
   t.end()
 })
 
+test('getRawValue', function(t) {
+  t.plan(1)
+  var mask = new InputMask({pattern: '1111 1111', value: '98781'})
+
+  t.equal(mask.getRawValue(), '98781', 'Current value without non-editable pattern characters')
+})
+
 test('formatValueToPattern', function(t) {
   t.plan(7)
 
