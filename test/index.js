@@ -483,3 +483,16 @@ test('History', function(t) {
   t.deepEqual([mask.getValue(), mask.selection], ['abc123', {start: 6, end: 6}])
   t.false(mask.redo(), 'invalid redo - nothing more to redo')
 })
+
+test('hasValueChanged', function(t) {
+  t.plan(2)
+
+  function checkValueChanged(value, pattern, nextValue) {
+    var mask = new InputMask({pattern: pattern})
+    mask.paste(value)
+    return mask.hasValueChanged(nextValue)
+  }
+
+  t.true(checkValueChanged('100', '111%', '99'), 'value should have changed')
+  t.false(checkValueChanged('100', '111%', '100'), 'value should not have changed')
+})
